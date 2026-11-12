@@ -7,8 +7,8 @@ export const site = {
   name: 'Leslie Cosmétique',
   founder: 'Leslie Djoman',
   monogram: 'LC',
-  // {{NOM_DOMAINE}} — non définitif
-  url: 'https://leslie-cosmetique.com',
+  // {{NOM_DOMAINE}} — sous-domaine provisoire (à changer si un domaine dédié est acheté, ainsi que public/sitemap.xml et public/robots.txt)
+  url: 'https://leslie.phoenixpro.fr',
   // {{EMAIL_PRO}}
   email: 'contact@leslie-cosmetique.com',
   // {{LIENS}} réseaux sociaux

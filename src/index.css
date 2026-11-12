@@ -1,0 +1,238 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #f7f1e8;
+  --nude: #eadbc8;
+  --sand: #d9c4ac;
+  --caramel: #b58b6a;
+  --caramel-deep: #96633f;
+  --brown: #6b4a38;
+  --espresso: #3a2a22;
+  --white-warm: #fffbf6;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--cream);
+  color: var(--espresso);
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--caramel);
+  color: var(--white-warm);
+}
+
+/* ---- Grain subtil sur les fonds ---- */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  z-index: 90;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Typo ---- */
+.font-serif-lc {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+@layer components {
+.label-lc {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--caramel-deep);
+}
+.label-lc::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+}
+}
+
+/* ---- Soulignement animé des liens ---- */
+.link-line {
+  position: relative;
+}
+.link-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.link-line:hover::after,
+.link-line.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ---- Marquee ---- */
+@keyframes marquee-lc {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-lc 36s linear infinite;
+  will-change: transform;
+}
+
+/* ---- Hero image vivante (zoom lent + dérive, en attendant la vidéo) ---- */
+@keyframes kenburns-lc {
+  0% { transform: scale(1.02) translate(0, 0); }
+  50% { transform: scale(1.1) translate(-1.2%, 1%); }
+  100% { transform: scale(1.02) translate(0, 0); }
+}
+.hero-media {
+  animation: kenburns-lc 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ---- Indicateur de scroll ---- */
+@keyframes scroll-dot {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(26px); opacity: 0; }
+}
+.scroll-dot {
+  animation: scroll-dot 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* ---- Cartes qui se retournent ---- */
+.flip-card {
+  perspective: 1400px;
+}
+.flip-inner {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.flip-card.is-flipped .flip-inner {
+  transform: rotateY(180deg);
+}
+@media (hover: hover) {
+  .flip-card:hover .flip-inner {
+    transform: rotateY(180deg);
+  }
+}
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* ---- Flottement des éléments détourés ---- */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0) rotate(var(--float-rot, 0deg)); }
+  50% { transform: translateY(-14px) rotate(calc(var(--float-rot, 0deg) + 2deg)); }
+}
+.float-soft {
+  animation: float-soft 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ---- Curseur personnalisé ---- */
+.cursor-lc {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  pointer-events: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(247, 241, 232, 0.9);
+  mix-blend-mode: exclusion;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
+}
+.cursor-lc.is-hover {
+  width: 64px;
+  height: 64px;
+  background: rgba(234, 219, 200, 0.92);
+  mix-blend-mode: normal;
+}
+.cursor-lc .cursor-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--espresso);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.cursor-lc.is-hover .cursor-label {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .cursor-lc { display: none; }
+}
+
+/* ---- Focus visible ---- */
+:focus-visible {
+  outline: 2px solid var(--caramel);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .hero-media,
+  .scroll-dot,
+  .float-soft {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

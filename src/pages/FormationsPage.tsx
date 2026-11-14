@@ -3,13 +3,15 @@ import { formations, offerPath, formatPrice } from '@/data/offers';
 import { site } from '@/data/site';
 import { Link } from '@/lib/router';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
+import { CountdownLine } from '@/components/Countdown';
+import { AuditHint } from '@/components/AuditPromo';
 import { ArrowRight, Clock3, BadgeCheck, Check, MonitorPlay } from 'lucide-react';
 
 export function FormationsPage() {
   useSeo({
     title: 'Formations',
     description:
-      'Formations en ligne de Leslie Cosmétique : formation produits capillaires et guide de formulation cosmétique, accessibles partout et à votre rythme.',
+      'Formations de Leslie Cosmétique : formation cosmétique capillaire en direct (400 €), guide de 10 recettes capillaires (38 €) et guide numérique de formulation cosmétique (48 €).',
     path: '/formations',
   });
 
@@ -27,7 +29,7 @@ export function FormationsPage() {
           </div>
           <Reveal delay={0.1} className="max-w-[400px]">
             <p className="text-[14.5px] leading-relaxed text-brown">
-              Deux formats complémentaires pour devenir autonome : une formation capillaire complète avec démonstrations pratiques, et un guide pour poser des bases solides.
+              Trois formats complémentaires pour devenir autonome : une formation capillaire complète en direct, un guide de recettes capillaires, et un guide pour poser des bases solides.
             </p>
           </Reveal>
         </div>
@@ -58,6 +60,7 @@ export function FormationsPage() {
               <div>
                 <h2 className="font-serif-lc text-[24px] leading-tight text-espresso md:text-[26px]">{o.name}</h2>
                 <p className="mt-1.5 font-serif-lc text-[16px] italic leading-snug text-brown">{o.tagline}</p>
+                {o.enrollment && <CountdownLine offer={o} where="formations_page" className="mt-2" />}
                 <ul className="mt-3 grid gap-1.5 sm:grid-cols-2">
                   {o.outcomes.slice(0, 4).map((x) => (
                     <li key={x} className="flex items-start gap-2 text-[13px] leading-snug text-espresso">
@@ -70,8 +73,9 @@ export function FormationsPage() {
               <div className="flex items-center justify-between gap-3 border-t border-sand/60 pt-4 md:flex-col md:items-start md:border-l md:border-t-0 md:pl-6 md:pt-0">
                 <div>
                   <span className="font-serif-lc text-[30px] font-medium leading-none text-espresso">{formatPrice(o.price)}</span>
+                  {o.priceNote && <span className="ml-1.5 text-[12px] text-brown">{o.priceNote}</span>}
                   <p className="mt-1.5 flex items-center gap-1.5 text-[12px] text-brown">
-                    <MonitorPlay size={13} className="text-caramel" aria-hidden /> 100 % en ligne
+                    <MonitorPlay size={13} className="text-caramel" aria-hidden /> {o.channel}
                   </p>
                   {o.slug === 'formation-produits-capillaires' && site.preorder.active && (
                     <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-nude px-3 py-1 text-[11px] font-medium text-espresso">
@@ -87,6 +91,7 @@ export function FormationsPage() {
             </Link>
           </Reveal>
         ))}
+        <AuditHint where="formations_page" />
       </section>
     </>
   );

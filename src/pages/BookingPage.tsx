@@ -1,8 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, CalendarCheck2, Check, Clock3, Loader2, Video } from 'lucide-react';
-import { coachings, formatPrice, getOffer, offerPath, type Offer } from '@/data/offers';
+import { coachings, formatPrice, getVisibleOffer, offerPath, usesCalendar, bookingHref, type Offer } from '@/data/offers';
 import { useSeo } from '@/lib/seo';
-import { Link } from '@/lib/router';
+import { Link, useRouter } from '@/lib/router';
 import { track } from '@/lib/track';
 import { createBooking, fetchTakenSlots } from '@/lib/booking';
 import { BookingCalendar, timeFmt } from '@/components/booking/BookingCalendar';
@@ -14,8 +14,9 @@ const inputCls =
   'mt-1.5 w-full rounded-[12px] border border-sand bg-white-warm px-4 py-3 text-[14.5px] text-espresso placeholder:text-brown/50 transition-colors focus:border-caramel focus:outline-none';
 
 export function BookingPage({ slug }: { slug?: string }) {
-  const initial = slug ? getOffer(slug) : undefined;
-  const [offer, setOffer] = useState<Offer | undefined>(initial?.kind === 'coaching' ? initial : undefined);
+  const initial = slug ? getVisibleOffer(slug) : undefined;
+  const { navigate } = useRouter();
+  const [offer, setOffer] = useState<Offer | undefined>(initial && usesCalendar(initial) ? initial : undefined);
   const [step, setStep] = useState(offer ? 1 : 0);
   const [month, setMonth] = useState(() => {
     const d = new Date();
@@ -31,6 +32,13 @@ export function BookingPage({ slug }: { slug?: string }) {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [done, setDone] = useState(false);
+
+  // Coaching réservé hors calendrier (audit) : redirection vers son lien ou sa page.
+  useEffect(() => {
+    if (initial && initial.kind === 'coaching' && !usesCalendar(initial) && bookingHref(initial).startsWith('/')) {
+      navigate(bookingHref(initial), { replace: true });
+    }
+  }, [initial, navigate]);
 
   useSeo({
     title: 'Réserver un appel',
@@ -86,7 +94,7 @@ export function BookingPage({ slug }: { slug?: string }) {
           <div>
             <p className="label-lc">Réservation</p>
             <h1 className="mt-3 font-serif-lc text-[32px] leading-[1.1] text-espresso md:text-[40px]">
-              Réserve ton appel <span className="italic text-brown">en 3 étapes</span>
+              Réservez votre appel <span className="italic text-brown">en 3 étapes</span>
             </h1>
           </div>
           {!done && (
@@ -112,7 +120,7 @@ export function BookingPage({ slug }: { slug?: string }) {
         <div className="mt-8 grid gap-5 lg:grid-cols-[290px_1fr]">
           <aside className="order-2 lg:order-1">
             <div className="rounded-[20px] border border-sand/70 bg-white-warm p-5 lg:sticky lg:top-24">
-              <p className="text-[11.5px] font-medium uppercase tracking-[0.16em] text-brown">Ton rendez-vous</p>
+              <p className="text-[11.5px] font-medium uppercase tracking-[0.16em] text-brown">Votre rendez-vous</p>
               {offer ? (
                 <>
                   <div className="mt-4 flex items-center gap-3">
@@ -137,7 +145,7 @@ export function BookingPage({ slug }: { slug?: string }) {
                   )}
                 </>
               ) : (
-                <p className="mt-3 text-[14px] leading-relaxed text-brown">Choisis d’abord le coaching qui correspond à ton besoin.</p>
+                <p className="mt-3 text-[14px] leading-relaxed text-brown">Choisissez d’abord le coaching qui correspond à votre besoin.</p>
               )}
             </div>
           </aside>
@@ -150,8 +158,8 @@ export function BookingPage({ slug }: { slug?: string }) {
                 </span>
                 <h2 className="mt-5 font-serif-lc text-[28px] text-espresso">Demande envoyée</h2>
                 <p className="mx-auto mt-2 max-w-[440px] text-[14.5px] leading-relaxed text-brown">
-                  Ton créneau du <strong className="font-medium text-espresso">{longFmt.format(slot)} à {timeFmt.format(slot)}</strong> est bloqué.
-                  Leslie te confirme le rendez-vous par e-mail à {form.email} avec le lien visio.
+                  Votre créneau du <strong className="font-medium text-espresso">{longFmt.format(slot)} à {timeFmt.format(slot)}</strong> est bloqué.
+                  Leslie vous confirme le rendez-vous par e-mail à {form.email} avec le lien visio.
                 </p>
                 <div className="mt-7 flex flex-wrap justify-center gap-3">
                   <a
@@ -170,9 +178,36 @@ export function BookingPage({ slug }: { slug?: string }) {
               </div>
             ) : step === 0 ? (
               <>
-                <h2 className="font-serif-lc text-[24px] text-espresso">De quoi as-tu besoin ?</h2>
+                <h2 className="font-serif-lc text-[24px] text-espresso">De quoi avez-vous besoin ?</h2>
                 <div className="mt-5 grid gap-3 md:grid-cols-3">
-                  {coachings.map((o) => (
+                  {coachings.map((o) => !usesCalendar(o) ? (
+                    <a
+                      key={o.slug}
+                      href={bookingHref(o)}
+                      target={bookingHref(o).startsWith('http') ? '_blank' : undefined}
+                      rel={bookingHref(o).startsWith('http') ? 'noopener noreferrer' : undefined}
+                      onClick={(e) => {
+                        track('audit_book_click', { offer: o.slug, where: 'booking_page' });
+                        const href = bookingHref(o);
+                        if (href.startsWith('/')) {
+                          e.preventDefault();
+                          navigate(href);
+                        }
+                      }}
+                      data-track={`audit_book_booking_page`}
+                      className="group overflow-hidden rounded-[16px] border border-sand/70 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    >
+                      <img src={o.image} alt="" loading="lazy" className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className="p-4">
+                        <p className="font-serif-lc text-[19px] leading-tight text-espresso">{o.name}</p>
+                        <p className="mt-1.5 text-[13px] leading-snug text-brown">{o.tagline}</p>
+                        <p className="mt-3 flex items-center justify-between text-[13px] font-medium text-espresso">
+                          {formatPrice(o.price)} / {o.duration}
+                          <ArrowRight size={15} className="text-caramel transition-transform group-hover:translate-x-1" aria-hidden />
+                        </p>
+                      </div>
+                    </a>
+                  ) : (
                     <button
                       key={o.slug}
                       type="button"
@@ -196,7 +231,7 @@ export function BookingPage({ slug }: { slug?: string }) {
               </>
             ) : step === 1 ? (
               <>
-                <h2 className="font-serif-lc text-[24px] text-espresso">Choisis ta date et ton heure</h2>
+                <h2 className="font-serif-lc text-[24px] text-espresso">Choisissez votre date et votre heure</h2>
                 {sendError && <p className="mt-2 text-[13.5px] text-[#9b3b2a]">{sendError}</p>}
                 <div className="mt-5">
                   <BookingCalendar
@@ -227,7 +262,7 @@ export function BookingPage({ slug }: { slug?: string }) {
               </>
             ) : (
               <form onSubmit={submit}>
-                <h2 className="font-serif-lc text-[24px] text-espresso">Tes coordonnées</h2>
+                <h2 className="font-serif-lc text-[24px] text-espresso">Vos coordonnées</h2>
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
                   <label className="text-[13px] font-medium text-espresso">
                     Nom complet
@@ -242,7 +277,7 @@ export function BookingPage({ slug }: { slug?: string }) {
                     <input type="tel" maxLength={40} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputCls} autoComplete="tel" />
                   </label>
                   <label className="text-[13px] font-medium text-espresso md:col-span-2">
-                    Parle-moi de ton projet <span className="font-normal text-brown">(facultatif)</span>
+                    Parlez-moi de votre projet <span className="font-normal text-brown">(facultatif)</span>
                     <textarea rows={4} maxLength={2000} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className={`${inputCls} resize-none`} />
                   </label>
                 </div>

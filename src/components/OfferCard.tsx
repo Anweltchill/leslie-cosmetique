@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import { type Offer, offerPath, formatPrice } from '@/data/offers';
 import { Link } from '@/lib/router';
+import { CountdownLine } from '@/components/Countdown';
 
 interface Props {
   offer: Offer;
@@ -36,12 +37,15 @@ export function OfferCard({ offer, index = 0 }: Props) {
       <div className="flex flex-1 flex-col gap-2 p-4">
         <h3 className="font-serif-lc text-[20px] leading-tight text-espresso">{offer.shortName}</h3>
         <p className="text-[13px] leading-relaxed text-brown">{offer.tagline}</p>
+        {offer.enrollment && <CountdownLine offer={offer} where={`offer_card_${offer.slug}`} />}
         <div className="mt-auto flex items-end justify-between pt-2.5">
           <div>
             <p className="font-serif-lc text-[22px] font-medium leading-none text-espresso transition-transform duration-300 group-hover:-translate-y-0.5">
               {formatPrice(offer.price)}
             </p>
-            {offer.duration && <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-brown">{offer.duration}</p>}
+            {(offer.duration || offer.priceNote) && (
+              <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-brown">{offer.duration ?? offer.priceNote}</p>
+            )}
           </div>
           <span
             className="flex h-9 w-9 items-center justify-center rounded-full border border-sand text-espresso transition-all duration-300 group-hover:border-espresso group-hover:bg-espresso group-hover:text-cream"

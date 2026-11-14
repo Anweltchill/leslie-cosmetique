@@ -10,13 +10,13 @@ export function FinalCta() {
           <Reveal><p className="label-lc !text-sand">On commence ?</p></Reveal>
           <MaskLines className="mt-3">
             <h2 className="font-serif-lc text-[30px] leading-[1.08] text-white-warm md:text-[40px]">
-              <MaskLine>Prête à créer tes</MaskLine>
+              <MaskLine>Prête à créer vos</MaskLine>
               <MaskLine className="italic text-sand">propres formules ?</MaskLine>
             </h2>
           </MaskLines>
           <Reveal delay={0.1}>
             <p className="mt-3 max-w-[400px] text-[14.5px] leading-relaxed text-cream">
-              Choisis une formation pour apprendre à ton rythme, ou réserve un appel pour en parler ensemble.
+              Choisissez une formation pour apprendre à votre rythme, ou réservez un appel pour en parler ensemble.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <MagneticButton to="/formations" variant="cream" trackName="final_formations">

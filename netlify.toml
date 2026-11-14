@@ -5,6 +5,22 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Offres retirées (visible: false) : redirection vers la page de leur famille
+[[redirects]]
+  from = "/offres/formation-produits-capillaires"
+  to = "/formations"
+  status = 301
+
+[[redirects]]
+  from = "/offres/coaching-conseils-capillaires"
+  to = "/coachings"
+  status = 301
+
+[[redirects]]
+  from = "/reserver/coaching-conseils-capillaires"
+  to = "/reserver"
+  status = 301
+
 # Application monopage : toutes les routes renvoient index.html
 [[redirects]]
   from = "/*"

@@ -12,14 +12,14 @@ const steps = [
   {
     num: '02',
     title: 'J’achète ou je réserve',
-    text: 'Accès immédiat à la formation, ou choix de ta date et de ton heure dans le calendrier.',
+    text: 'Inscription à la formation, accès immédiat aux guides, ou choix de votre date et de votre heure dans le calendrier.',
     image: '/step-book.webp',
     alt: 'Mains tenant un téléphone affichant un calendrier de réservation',
   },
   {
     num: '03',
     title: 'J’avance en autonomie',
-    text: 'Tu formules, tu ajustes, tu progresses, avec des méthodes claires et des réponses concrètes.',
+    text: 'Vous formulez, vous ajustez, vous progressez, avec des méthodes claires et des réponses concrètes.',
     image: '/step-progress.webp',
     alt: 'Mains versant une crème ivoire dans un pot en verre, geste sûr et accompli',
   },

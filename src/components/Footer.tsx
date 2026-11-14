@@ -17,9 +17,9 @@ export function Footer() {
         <div className="flex flex-col items-start justify-between gap-5 border-b border-cream/20 py-8 md:flex-row md:items-center">
           <div>
             <p className="font-serif-lc text-[26px] leading-tight text-white-warm md:text-[30px]">
-              Une question sur ton projet ?
+              Une question sur votre projet ?
             </p>
-            <p className="mt-1 text-[14px] text-cream">Réserve un appel visio d’une heure, en choisissant ta date et ton heure.</p>
+            <p className="mt-1 text-[14px] text-cream">Réservez un appel visio d’une heure, en choisissant votre date et votre heure.</p>
           </div>
           <Link
             to="/reserver"
@@ -61,7 +61,7 @@ export function Footer() {
               {formations.map((o) => (
                 <li key={o.slug} className="flex items-baseline justify-between gap-3 pr-4">
                   <Link to={offerPath(o)} className={linkCls}>{o.shortName}</Link>
-                  <span className="text-[12.5px] text-sand">{formatPrice(o.price)}</span>
+                  <span className="whitespace-nowrap text-[12.5px] text-sand">{formatPrice(o.price)}</span>
                 </li>
               ))}
               <li><Link to="/formations" className="link-line text-[13px] font-medium text-white-warm">Toutes les formations</Link></li>
@@ -74,7 +74,7 @@ export function Footer() {
               {coachings.map((o) => (
                 <li key={o.slug} className="flex items-baseline justify-between gap-3 pr-4">
                   <Link to={offerPath(o)} className={linkCls}>{o.shortName}</Link>
-                  <span className="text-[12.5px] text-sand">{formatPrice(o.price)}</span>
+                  <span className="whitespace-nowrap text-[12.5px] text-sand">{formatPrice(o.price)}</span>
                 </li>
               ))}
               <li><Link to="/coachings" className="link-line text-[13px] font-medium text-white-warm">Tous les coachings</Link></li>

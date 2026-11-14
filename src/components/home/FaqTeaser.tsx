@@ -22,7 +22,7 @@ const items = [
   },
   {
     q: 'Comment se déroulent les coachings ?',
-    a: "En visio, pendant 1 heure, à un créneau que vous choisissez. Vous repartez avec des réponses concrètes et des pistes d'action claires.",
+    a: "En visio, pendant 1 heure, à un créneau que vous choisissez (30 minutes pour l'audit d'orientation). Vous repartez avec des réponses concrètes et des pistes d'action claires.",
   },
 ];
 

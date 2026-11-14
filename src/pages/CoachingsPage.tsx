@@ -1,20 +1,22 @@
 import { useSeo } from '@/lib/seo';
-import { coachings, offerPath, formatPrice } from '@/data/offers';
+import { coachings, offerPath, formatPrice, bookingHref } from '@/data/offers';
+import { track } from '@/lib/track';
+import { AuditHint } from '@/components/AuditPromo';
 import { Link } from '@/lib/router';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { CalendarDays, Clock3, Video, MousePointerClick } from 'lucide-react';
 
 const steps = [
-  { icon: MousePointerClick, text: 'Choisis ton coaching' },
-  { icon: CalendarDays, text: 'Sélectionne ta date et ton heure' },
-  { icon: Video, text: 'Reçois ton lien visio par e-mail' },
+  { icon: MousePointerClick, text: 'Choisissez votre coaching' },
+  { icon: CalendarDays, text: 'Sélectionnez votre date et votre heure' },
+  { icon: Video, text: 'Recevez votre lien visio par e-mail' },
 ];
 
 export function CoachingsPage() {
   useSeo({
     title: 'Coachings',
     description:
-      'Coachings individuels en visio avec Leslie Djoman : formulation cosmétique, conseils capillaires personnalisés et consultation lancement de marque.',
+      'Coachings individuels avec Leslie Djoman : coaching formulation (60 €, 1 h), consultation lancement de marque (79 €, 1 h) et audit d’orientation (30 €, 30 min).',
     path: '/coachings',
   });
 
@@ -33,7 +35,7 @@ export function CoachingsPage() {
           </div>
           <Reveal delay={0.1} className="max-w-[400px]">
             <p className="text-[14.5px] leading-relaxed text-brown">
-              Trois accompagnements individuels en visio, adaptés à votre situation : vos formulations, vos cheveux, ou votre projet de marque.
+              Trois accompagnements individuels, adaptés à votre situation : vos formulations, votre projet de marque, ou un audit pour vous orienter.
             </p>
           </Reveal>
         </div>
@@ -53,7 +55,7 @@ export function CoachingsPage() {
                     className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white-warm px-3 py-1.5 text-[11px] font-medium text-espresso">
-                    <Clock3 size={12} className="text-caramel" aria-hidden /> {o.duration} en visio
+                    <Clock3 size={12} className="text-caramel" aria-hidden /> {o.durationLabel}
                   </span>
                 </Link>
                 <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
@@ -61,13 +63,27 @@ export function CoachingsPage() {
                   <p className="mt-1.5 flex-1 text-[13.5px] leading-snug text-brown">{o.tagline}</p>
                   <p className="mt-4 font-serif-lc text-[26px] font-medium leading-none text-espresso">{formatPrice(o.price)}</p>
                   <div className="mt-4 grid grid-cols-2 gap-2">
-                    <Link
-                      to={`/reserver/${o.slug}`}
-                      trackName={`coachings_page_book_${o.slug}`}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-full bg-espresso px-3 py-2.5 text-[13px] font-medium text-white-warm transition-colors hover:bg-brown"
-                    >
-                      <CalendarDays size={14} aria-hidden /> Réserver
-                    </Link>
+                    {bookingHref(o).startsWith('/') ? (
+                      <Link
+                        to={bookingHref(o)}
+                        trackName={o.slug === 'audit-orientation' ? 'audit_book_coachings_page' : `coachings_page_book_${o.slug}`}
+                        onClick={o.slug === 'audit-orientation' ? () => track('audit_book_click', { where: 'coachings_page' }) : undefined}
+                        className="inline-flex items-center justify-center gap-1.5 rounded-full bg-espresso px-3 py-2.5 text-[13px] font-medium text-white-warm transition-colors hover:bg-brown"
+                      >
+                        <CalendarDays size={14} aria-hidden /> Réserver
+                      </Link>
+                    ) : (
+                      <a
+                        href={bookingHref(o)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-track={o.slug === 'audit-orientation' ? 'audit_book_coachings_page' : `coachings_page_book_${o.slug}`}
+                        onClick={() => track(o.slug === 'audit-orientation' ? 'audit_book_click' : 'booking_link_click', { offer: o.slug, where: 'coachings_page' })}
+                        className="inline-flex items-center justify-center gap-1.5 rounded-full bg-espresso px-3 py-2.5 text-[13px] font-medium text-white-warm transition-colors hover:bg-brown"
+                      >
+                        <CalendarDays size={14} aria-hidden /> Réserver
+                      </a>
+                    )}
                     <Link
                       to={offerPath(o)}
                       trackName={`coachings_page_card_${o.slug}`}
@@ -81,6 +97,10 @@ export function CoachingsPage() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-[1120px] px-5 pb-6 md:px-8" aria-label="Aide au choix">
+        <AuditHint where="coachings_page" />
       </section>
 
       <section className="mx-auto max-w-[1120px] px-5 pb-12 md:px-8 md:pb-16" aria-label="Comment réserver">

@@ -3,7 +3,7 @@ import { gsap } from '@/lib/anim';
 import { MagneticButton } from '@/components/MagneticButton';
 import { media, photo, photoSet } from '@/data/media';
 
-const moments = ['Ta première crème', 'Ta routine capillaire', 'Ta propre gamme'];
+const moments = ['Votre première crème', 'Votre routine capillaire', 'Votre propre gamme'];
 
 export function VisionBand() {
   const root = useRef<HTMLElement>(null);
@@ -86,7 +86,7 @@ export function VisionBand() {
           </div>
           <div className="absolute -bottom-5 -left-6 rounded-[14px] bg-white-warm px-4 py-3 shadow-lg">
             <span className="block text-[11px] uppercase tracking-[0.14em] text-caramel">Fait maison</span>
-            <span className="block font-serif-lc text-[18px] leading-tight text-espresso">Des soins qui te ressemblent</span>
+            <span className="block font-serif-lc text-[18px] leading-tight text-espresso">Des soins qui vous ressemblent</span>
           </div>
         </div>
       </div>

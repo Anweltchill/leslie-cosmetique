@@ -60,7 +60,7 @@ export function injectJsonLd() {
     name: site.name,
     founder: { '@type': 'Person', name: site.founder },
     description:
-      'Formations en formulation cosmétique naturelle et coachings personnalisés : formulation, conseils capillaires et lancement de marque.',
+      'Formations et guides en formulation cosmétique naturelle, coachings personnalisés : formulation, lancement de marque et audit d’orientation.',
     url: site.url,
     email: site.email,
     image: `${site.url}/og-image.webp`,
@@ -69,4 +69,18 @@ export function injectJsonLd() {
   script.type = 'application/ld+json';
   script.textContent = JSON.stringify(data);
   document.head.appendChild(script);
+}
+
+/** Données structurées propres à une page (remplacées à chaque changement, retirées en quittant la page). */
+export function useJsonLd(id: string, data: Record<string, unknown> | null) {
+  const json = data ? JSON.stringify(data) : '';
+  useEffect(() => {
+    if (!json) return;
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.dataset.ld = id;
+    script.textContent = json;
+    document.head.appendChild(script);
+    return () => script.remove();
+  }, [id, json]);
 }

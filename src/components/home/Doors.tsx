@@ -2,6 +2,7 @@ import { ArrowUpRight, GraduationCap, Video } from 'lucide-react';
 import { Link } from '@/lib/router';
 import { formations, coachings, offerPath, formatPrice, type Offer } from '@/data/offers';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
+import { CountdownLine } from '@/components/Countdown';
 
 function Family({
   icon: Icon,
@@ -53,7 +54,12 @@ function Family({
               >
                 <span className="min-w-0">
                   <span className="block font-serif-lc text-[18px] leading-tight">{o.name}</span>
-                  <span className={`block text-[12.5px] ${dark ? 'text-sand' : 'text-brown'}`}>{o.duration ? `${o.duration} en visio` : o.format}</span>
+                  <span className={`block text-[12.5px] ${dark ? 'text-sand' : 'text-brown'}`}>{o.durationLabel ?? o.channel}</span>
+                  {o.enrollment && (
+                    <span className="mt-1 block">
+                      <CountdownLine offer={o} where="home_door" tone={dark ? 'dark' : 'light'} />
+                    </span>
+                  )}
                 </span>
                 <span className="flex shrink-0 items-center gap-3">
                   <span className="font-serif-lc text-[20px] font-medium">{formatPrice(o.price)}</span>
@@ -103,7 +109,7 @@ export function Doors() {
           icon={GraduationCap}
           label="Apprendre seule"
           title="Formations"
-          text="Des contenus en ligne pour apprendre à formuler, à ton rythme."
+          text="Une formation en direct et des guides pour apprendre à formuler, à votre rythme."
           image="/door-formations.webp"
           imageAlt="Femme noire élégante suivant une formation en ligne, entourée de flacons ambrés et de plantes séchées"
           items={formations}
@@ -115,7 +121,7 @@ export function Doors() {
           icon={Video}
           label="Être accompagnée"
           title="Coachings"
-          text="Une heure en visio avec Leslie pour tes formules, tes cheveux ou ta marque."
+          text="Un accompagnement individuel avec Leslie pour vos formules, votre marque, ou pour vous orienter."
           image="/door-coachings.webp"
           imageAlt="Femme noire tenant un pot de crème lors d'un échange en visio, ambiance chaleureuse"
           items={coachings}

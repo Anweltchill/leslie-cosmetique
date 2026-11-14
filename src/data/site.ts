@@ -4,6 +4,34 @@
  * Remplacez simplement les valeurs ci-dessous, aucun autre fichier à toucher.
  */
 export const site = {
+  /**
+   * LIENS À RENSEIGNER
+   * Remplacez chaque valeur par le lien fourni (https://…).
+   * Tant qu'une valeur commence par « # », le bouton correspondant ne mène nulle part.
+   */
+  links: {
+    // {{LIEN_PAIEMENT_FORMATION_LIVE}} — Formation cosmétique capillaire (en direct), 400 €, bouton « Je m'inscris »
+    payFormationLive: '#lien-paiement-formation-live',
+    // {{LIEN_PAIEMENT_GUIDE_RECETTES}} — Guide de mes 10 meilleures recettes capillaires, 38 €
+    payGuideRecettes: '#lien-paiement-guide-recettes',
+    // {{LIEN_PAIEMENT_GUIDE_FORMULATION}} — Guide numérique de formulation, 48 € (ancien {{LIEN_PAIEMENT_GUIDE}})
+    payGuideFormulation: '#lien-paiement-guide',
+    // {{LIEN_RESA_COACHING_FORMULATION}} — Coaching Formulation, 60 €.
+    // La réservation passe par le calendrier du site ; ce lien sert au bouton « Régler ma séance » affiché après la réservation.
+    resaCoachingFormulation: '#lien-resa-coaching-formulation',
+    // {{LIEN_RESA_LANCEMENT_MARQUE}} — Consultation Lancement de Marque, 79 € (même fonctionnement que ci-dessus)
+    resaLancementMarque: '#lien-resa-lancement-marque',
+    // {{LIEN_RESA_AUDIT}} — Audit (appel d'orientation), 30 €, bouton « Réserver mon audit »
+    resaAudit: '#lien-resa-audit',
+    // {{LIEN_CONTACT}} — bouton « Être prévenue de la prochaine session » une fois les inscriptions closes
+    contact: '/contact',
+
+    // Anciens liens, conservés pour les offres masquées (visible: false)
+    // {{LIEN_PAIEMENT_FORMATION_CAPILLAIRE}}
+    payFormationCapillaire: '#lien-paiement-formation-capillaire',
+    // {{LIEN_RESA_COACHING_CAPILLAIRE}}
+    resaCoachingCapillaire: '#lien-resa-coaching-capillaire',
+  },
   name: 'Leslie Cosmétique',
   founder: 'Leslie Djoman',
   monogram: 'LC',
@@ -16,18 +44,6 @@ export const site = {
     tiktok: 'https://www.tiktok.com/@lesliecosmetique',
     instagram: 'https://www.instagram.com/lesliecosmetique',
   },
-  links: {
-    // {{LIEN_PAIEMENT_FORMATION_CAPILLAIRE}}
-    payFormationCapillaire: '#lien-paiement-formation-capillaire',
-    // {{LIEN_PAIEMENT_GUIDE}}
-    payGuide: '#lien-paiement-guide',
-    // {{LIEN_RESA_COACHING_FORMULATION}}
-    resaCoachingFormulation: '#lien-resa-coaching-formulation',
-    // {{LIEN_RESA_COACHING_CAPILLAIRE}}
-    resaCoachingCapillaire: '#lien-resa-coaching-capillaire',
-    // {{LIEN_RESA_LANCEMENT_MARQUE}}
-    resaLancementMarque: '#lien-resa-lancement-marque',
-  },
   // Calendrier de réservation des coachings (heures en UTC, affichées dans l'heure locale du visiteur)
   booking: {
     weekdays: [1, 2, 3, 4, 5, 6],
@@ -36,16 +52,16 @@ export const site = {
     maxDaysAhead: 60,
   },
   // Pré-commande : passer à true pour activer le mode pré-commande
-  // sur la Formation Produits Capillaires. {{REMISE}} = texte de la réduction.
+  // sur l'ancienne Formation Produits Capillaires (masquée). {{REMISE}} = texte de la réduction.
   preorder: {
     active: false,
     discount: '−20 %',
   },
-  // Pop-up d'urgence (désactivé par défaut). {{DATE_SESSION}}
+  // Pop-up d'information sur la formation en direct.
+  // Les dates viennent de l'offre (src/data/offers.ts → enrollment) ; le pop-up disparaît
+  // automatiquement à la clôture des inscriptions. Passer à false pour le désactiver.
   urgency: {
-    active: false,
-    title: 'Une seule session ce mois-ci — places limitées',
-    sessionDate: '28 novembre 2026',
+    active: true,
   },
   // FAQ — réponses à compléter par Leslie {{À COMPLÉTER}}
   faq: {
@@ -54,3 +70,6 @@ export const site = {
     acces: "Réponse à compléter — durée d'accès aux formations.",
   },
 } as const;
+
+/** Vrai si le lien a été renseigné (n'est plus un emplacement « #… »). */
+export const isLinkSet = (link: string) => !link.startsWith('#');

@@ -11,8 +11,8 @@ const creations = [
     kicker: 'Émulsions',
     image: '/create-cream.webp',
     alt: 'Pot ambré rempli de crème ivoire onctueuse, spatule en bois posée dessus, sur une pierre travertin',
-    text: 'Des textures fondantes pour la peau et les cheveux. Tu apprends à marier phase huileuse et phase aqueuse pour une émulsion stable.',
-    learn: ['Choisir ton émulsifiant', 'Doser tes actifs', 'Stabiliser ta texture'],
+    text: 'Des textures fondantes pour la peau et les cheveux. Vous apprenez à marier phase huileuse et phase aqueuse pour une émulsion stable.',
+    learn: ['Choisir votre émulsifiant', 'Doser vos actifs', 'Stabiliser votre texture'],
     to: '/offres/guide-formulation',
     cta: 'Avec le Guide',
   },
@@ -23,8 +23,8 @@ const creations = [
     image: '/create-hairmask.webp',
     alt: 'Pot ambré de masque capillaire caramel, peigne en bois, huile et noix de karité',
     text: 'Des soins riches et démêlants pensés pour les cheveux crépus, frisés et bouclés.',
-    learn: ['Comprendre ta fibre', 'Nourrir sans alourdir', 'Créer ta routine'],
-    to: '/offres/formation-produits-capillaires',
+    learn: ['Comprendre votre fibre', 'Nourrir sans alourdir', 'Créer votre routine'],
+    to: '/offres/formation-cosmetique-capillaire',
     cta: 'Avec la Formation',
   },
   {
@@ -34,7 +34,7 @@ const creations = [
     image: '/create-cleanser.webp',
     alt: 'Flacon pompe ambré avec mousse onctueuse, fleurs séchées et romarin',
     text: 'Des nettoyants doux qui respectent le cuir chevelu et la peau, sans les dessécher.',
-    learn: ['Choisir tes tensioactifs', 'Ajuster la viscosité', 'Respecter le pH'],
+    learn: ['Choisir vos tensioactifs', 'Ajuster la viscosité', 'Respecter le pH'],
     to: '/offres/guide-formulation',
     cta: 'Avec le Guide',
   },
@@ -45,7 +45,7 @@ const creations = [
     image: '/create-balm.webp',
     alt: 'Pot ambré de baume doré, beurre de karité, pastilles de cire et cuillère en bois',
     text: 'Karité, huiles végétales et cires : des soins nourrissants, simples et précieux.',
-    learn: ['Associer beurres et huiles', 'Obtenir la bonne dureté', 'Conserver tes produits'],
+    learn: ['Associer beurres et huiles', 'Obtenir la bonne dureté', 'Conserver vos produits'],
     to: '/offres/guide-formulation',
     cta: 'Avec le Guide',
   },
@@ -66,7 +66,7 @@ function FlipCard({ c, index }: { c: (typeof creations)[number]; index: number }
             type="button"
             onClick={toggle}
             aria-pressed={flipped}
-            aria-label={`${c.title} : voir ce que tu vas apprendre`}
+            aria-label={`${c.title} : voir ce que vous allez apprendre`}
             className="flip-face group overflow-hidden rounded-[22px] text-left shadow-[0_30px_60px_-34px_rgba(58,42,34,0.65)]"
           >
             <img
@@ -83,7 +83,7 @@ function FlipCard({ c, index }: { c: (typeof creations)[number]; index: number }
             <span className="absolute inset-x-0 bottom-0 p-5">
               <span className="block font-serif-lc text-[25px] leading-[1.1] text-white-warm">{c.title}</span>
               <span className="mt-2 inline-flex items-center gap-1.5 text-[12px] font-medium text-sand">
-                <RotateCcw size={13} aria-hidden /> Retourne la carte
+                <RotateCcw size={13} aria-hidden /> Retournez la carte
               </span>
             </span>
           </button>

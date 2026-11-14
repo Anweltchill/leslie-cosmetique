@@ -3,7 +3,7 @@ import { track } from './track';
 
 interface RouterState {
   path: string;
-  navigate: (to: string) => void;
+  navigate: (to: string, opts?: { replace?: boolean }) => void;
 }
 
 const RouterContext = createContext<RouterState>({ path: '/', navigate: () => {} });
@@ -19,13 +19,14 @@ export function RouterProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  const navigate = useCallback((to: string) => {
+  const navigate = useCallback((to: string, opts?: { replace?: boolean }) => {
     const target = normalize(to);
     if (target === normalize(window.location.pathname)) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    window.history.pushState({}, '', target);
+    if (opts?.replace) window.history.replaceState({}, '', target);
+    else window.history.pushState({}, '', target);
     setPath(target);
     track('page_view', { path: target });
   }, []);
@@ -55,7 +56,7 @@ export function Link({ to, children, className, onClick, ariaLabel, trackName, s
     navigate(to);
   };
   return (
-    <a href={to} onClick={handle} className={className} aria-label={ariaLabel} style={style}>
+    <a href={to} onClick={handle} className={className} aria-label={ariaLabel} style={style} data-track={trackName}>
       {children}
     </a>
   );

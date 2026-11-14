@@ -10,6 +10,8 @@ import { AboutTeaser } from '@/components/home/AboutTeaser';
 import { ForWho } from '@/components/home/ForWho';
 import { FaqTeaser } from '@/components/home/FaqTeaser';
 import { FinalCta } from '@/components/home/FinalCta';
+import { LiveTrainingBand } from '@/components/home/LiveTrainingBand';
+import { AuditHomeBlock } from '@/components/AuditPromo';
 
 export function HomePage({ started }: { started: boolean }) {
   useSeo({
@@ -23,8 +25,10 @@ export function HomePage({ started }: { started: boolean }) {
   return (
     <>
       <Hero started={started} />
+      <LiveTrainingBand />
       <Pillars />
       <Doors />
+      <AuditHomeBlock />
       <Creations />
       <VisionBand />
       <HowItWorks />

@@ -3,15 +3,17 @@ import { ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
 import { Link } from '@/lib/router';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { track } from '@/lib/track';
+import { LoopVideo } from '@/components/LoopVideo';
 
 const creations = [
   {
     id: 'cremes',
     title: 'Crèmes et laits',
     kicker: 'Émulsions',
-    image: '/create-cream.webp',
-    alt: 'Pot ambré rempli de crème ivoire onctueuse, spatule en bois posée dessus, sur une pierre travertin',
-    text: 'Des textures fondantes pour la peau et les cheveux. Vous apprenez à marier phase huileuse et phase aqueuse pour une émulsion stable.',
+    video: '/videos/creation-cremes-laits.mp4',
+    image: '/videos/creation-cremes-laits.webp',
+    alt: 'Lait crémeux versé en filet dans un pot transparent',
+    text: 'Des textures fondantes et fluides pour la peau et les cheveux. Vous apprenez à marier phase huileuse et phase aqueuse pour une émulsion stable.',
     learn: ['Choisir votre émulsifiant', 'Doser vos actifs', 'Stabiliser votre texture'],
     to: '/offres/guide-formulation',
     cta: 'Avec le Guide',
@@ -20,8 +22,9 @@ const creations = [
     id: 'masques',
     title: 'Masques et après-shampoings',
     kicker: 'Soins capillaires',
-    image: '/create-hairmask.webp',
-    alt: 'Pot ambré de masque capillaire caramel, peigne en bois, huile et noix de karité',
+    video: '/videos/creation-masques.mp4',
+    image: '/videos/creation-masques.webp',
+    alt: 'Crème rose pâle onctueuse travaillée à la spatule dans un bol',
     text: 'Des soins riches et démêlants pensés pour les cheveux crépus, frisés et bouclés.',
     learn: ['Comprendre votre fibre', 'Nourrir sans alourdir', 'Créer votre routine'],
     to: '/offres/guide-recettes-capillaires',
@@ -29,22 +32,24 @@ const creations = [
   },
   {
     id: 'nettoyants',
-    title: 'Shampoings et gels douche',
+    title: 'Shampoings',
     kicker: 'Nettoyants',
-    image: '/create-cleanser.webp',
-    alt: 'Flacon pompe ambré avec mousse onctueuse, fleurs séchées et romarin',
-    text: 'Des nettoyants doux qui respectent le cuir chevelu et la peau, sans les dessécher.',
+    video: '/videos/creation-shampoings.mp4',
+    image: '/videos/creation-shampoings.webp',
+    alt: 'Préparation de shampoing rose violine mélangée à la cuillère dans un bol',
+    text: 'Des shampoings doux qui nettoient en respectant le cuir chevelu, sans le dessécher.',
     learn: ['Choisir vos tensioactifs', 'Ajuster la viscosité', 'Respecter le pH'],
     to: '/offres/guide-formulation',
     cta: 'Avec le Guide',
   },
   {
     id: 'baumes',
-    title: 'Baumes et beurres',
+    title: 'Baumes',
     kicker: '100 % corps gras',
-    image: '/create-balm.webp',
-    alt: 'Pot ambré de baume doré, beurre de karité, pastilles de cire et cuillère en bois',
-    text: 'Karité, huiles végétales et cires : des soins nourrissants, simples et précieux.',
+    video: '/videos/creation-baumes.mp4',
+    image: '/videos/creation-baumes.webp',
+    alt: 'Baume vert fondu versé dans un pot ambré',
+    text: 'Huiles végétales, beurres et cires, sans phase aqueuse : des soins nourrissants, simples et précieux.',
     learn: ['Associer beurres et huiles', 'Obtenir la bonne dureté', 'Conserver vos produits'],
     to: '/offres/guide-formulation',
     cta: 'Avec le Guide',
@@ -69,11 +74,9 @@ function FlipCard({ c, index }: { c: (typeof creations)[number]; index: number }
             aria-label={`${c.title} : voir ce que vous allez apprendre`}
             className="flip-face group overflow-hidden rounded-[22px] text-left shadow-[0_30px_60px_-34px_rgba(58,42,34,0.65)]"
           >
-            <img
-              src={c.image}
-              alt={c.alt}
-              loading="lazy"
-              decoding="async"
+            <LoopVideo
+              src={c.video}
+              poster={c.image}
               className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-[1.2s] group-hover:scale-110"
             />
             <span className="absolute inset-0 bg-gradient-to-t from-espresso/90 via-espresso/20 to-transparent" aria-hidden />

@@ -109,7 +109,7 @@ export function Doors() {
           icon={GraduationCap}
           label="Apprendre seule"
           title="Formations"
-          text="Une formation en direct et des guides pour apprendre à formuler, à votre rythme."
+          text="Des guides en ligne pour apprendre à formuler, à votre rythme."
           image="/door-formations.webp"
           imageAlt="Femme noire élégante suivant une formation en ligne, entourée de flacons ambrés et de plantes séchées"
           items={formations}

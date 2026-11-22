@@ -10,7 +10,7 @@ import { track } from '@/lib/track';
 const fromPrice = (list: { price: number }[]) => formatPrice(Math.min(...list.map((o) => o.price)));
 
 const paths = [
-  { to: '/formations', icon: GraduationCap, title: 'Formations', text: 'En direct ou à votre rythme', price: `dès ${fromPrice(formations)}` },
+  { to: '/formations', icon: GraduationCap, title: 'Formations', text: 'En ligne, à votre rythme', price: `dès ${fromPrice(formations)}` },
   { to: '/coachings', icon: Video, title: 'Coachings', text: '30 min à 1 h avec Leslie', price: `dès ${fromPrice(coachings)}` },
 ];
 

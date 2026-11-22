@@ -24,8 +24,8 @@ const creations = [
     alt: 'Pot ambré de masque capillaire caramel, peigne en bois, huile et noix de karité',
     text: 'Des soins riches et démêlants pensés pour les cheveux crépus, frisés et bouclés.',
     learn: ['Comprendre votre fibre', 'Nourrir sans alourdir', 'Créer votre routine'],
-    to: '/offres/formation-cosmetique-capillaire',
-    cta: 'Avec la Formation',
+    to: '/offres/guide-recettes-capillaires',
+    cta: 'Avec le Guide de recettes',
   },
   {
     id: 'nettoyants',

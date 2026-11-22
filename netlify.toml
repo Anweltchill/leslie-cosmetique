@@ -12,6 +12,11 @@
   status = 301
 
 [[redirects]]
+  from = "/offres/formation-cosmetique-capillaire"
+  to = "/formations"
+  status = 301
+
+[[redirects]]
   from = "/offres/coaching-conseils-capillaires"
   to = "/coachings"
   status = 301

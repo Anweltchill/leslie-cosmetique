@@ -11,7 +11,7 @@ export function FormationsPage() {
   useSeo({
     title: 'Formations',
     description:
-      'Formations de Leslie Cosmétique : formation cosmétique capillaire en direct (400 €), guide de 10 recettes capillaires (38 €) et guide numérique de formulation cosmétique (48 €).',
+      'Formations de Leslie Cosmétique : guide de 10 recettes capillaires (38 €) et guide numérique de formulation cosmétique (48 €), accessibles partout et à votre rythme.',
     path: '/formations',
   });
 
@@ -29,7 +29,7 @@ export function FormationsPage() {
           </div>
           <Reveal delay={0.1} className="max-w-[400px]">
             <p className="text-[14.5px] leading-relaxed text-brown">
-              Trois formats complémentaires pour devenir autonome : une formation capillaire complète en direct, un guide de recettes capillaires, et un guide pour poser des bases solides.
+              Deux guides complémentaires pour devenir autonome : un guide de recettes capillaires, et un guide pour poser des bases solides en formulation.
             </p>
           </Reveal>
         </div>

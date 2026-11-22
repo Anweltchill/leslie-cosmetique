@@ -12,7 +12,7 @@ const steps = [
   {
     num: '02',
     title: 'J’achète ou je réserve',
-    text: 'Inscription à la formation, accès immédiat aux guides, ou choix de votre date et de votre heure dans le calendrier.',
+    text: 'Accès immédiat aux guides, ou choix de votre date et de votre heure dans le calendrier.',
     image: '/step-book.webp',
     alt: 'Mains tenant un téléphone affichant un calendrier de réservation',
   },

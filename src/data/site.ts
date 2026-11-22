@@ -10,7 +10,7 @@ export const site = {
    * Tant qu'une valeur commence par « # », le bouton correspondant ne mène nulle part.
    */
   links: {
-    // {{LIEN_PAIEMENT_FORMATION_LIVE}} — Formation cosmétique capillaire (en direct), 400 €, bouton « Je m'inscris »
+    // {{LIEN_PAIEMENT_FORMATION_LIVE}} — Formation cosmétique capillaire (en direct), 400 € — offre retirée, lien conservé
     payFormationLive: '#lien-paiement-formation-live',
     // {{LIEN_PAIEMENT_GUIDE_RECETTES}} — Guide de mes 10 meilleures recettes capillaires, 38 €
     payGuideRecettes: '#lien-paiement-guide-recettes',
@@ -57,11 +57,9 @@ export const site = {
     active: false,
     discount: '−20 %',
   },
-  // Pop-up d'information sur la formation en direct.
-  // Les dates viennent de l'offre (src/data/offers.ts → enrollment) ; le pop-up disparaît
-  // automatiquement à la clôture des inscriptions. Passer à false pour le désactiver.
+  // Pop-up d'information sur la formation en direct — désactivé (formation retirée du site).
   urgency: {
-    active: true,
+    active: false,
   },
   // FAQ — réponses à compléter par Leslie {{À COMPLÉTER}}
   faq: {

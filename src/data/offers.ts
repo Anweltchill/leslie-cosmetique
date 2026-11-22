@@ -67,7 +67,8 @@ const allOffers: Offer[] = [
   {
     slug: 'formation-cosmetique-capillaire',
     kind: 'formation',
-    visible: true,
+    // Retirée du site (formation en direct abandonnée). Repasser à true pour la réafficher.
+    visible: false,
     name: 'Formation cosmétique capillaire (en direct)',
     shortName: 'Formation capillaire en direct',
     price: 400,
@@ -227,7 +228,7 @@ const allOffers: Offer[] = [
       { q: 'Le guide est-il accessible partout dans le monde ?', a: 'Oui, il est 100 % en ligne et accessible depuis toute la francophonie.' },
       { q: 'Quels sont les moyens de paiement ?', a: site.faq.paiement },
     ],
-    related: ['formation-cosmetique-capillaire', 'guide-formulation'],
+    related: ['guide-formulation', 'audit-orientation'],
   },
   {
     slug: 'guide-formulation',
@@ -277,7 +278,7 @@ const allOffers: Offer[] = [
       { q: 'Quels sont les moyens de paiement ?', a: site.faq.paiement },
       { q: 'Combien de temps ai-je accès au guide ?', a: site.faq.acces },
     ],
-    related: ['formation-cosmetique-capillaire', 'guide-recettes-capillaires'],
+    related: ['guide-recettes-capillaires', 'coaching-formulation'],
   },
 
   /* ───────────── COACHINGS ───────────── */
@@ -313,7 +314,7 @@ const allOffers: Offer[] = [
       { q: "Est-ce accessible depuis l'Afrique ?", a: 'Oui, la visio fonctionne partout avec une connexion internet.' },
       { q: "Puis-je préparer mes questions à l'avance ?", a: "Oui, et c'est même recommandé pour profiter au maximum de l'heure ensemble." },
     ],
-    related: ['formation-cosmetique-capillaire', 'audit-orientation'],
+    related: ['guide-formulation', 'audit-orientation'],
   },
   {
     slug: 'consultation-lancement-marque',

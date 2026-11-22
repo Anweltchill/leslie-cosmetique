@@ -1,27 +1,32 @@
 import { ArrowRight } from 'lucide-react';
 import { Link } from '@/lib/router';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
+import { LoopVideo } from '@/components/LoopVideo';
 
 const profiles = [
   {
-    image: '/who-formulate.webp',
-    alt: "Femme noire souriante mélangeant une crème dans un bol, cheveux en twist-out",
+    // Source : Drive « Leslie cosmetique media site », copy_B35A6AEC-….mov — 3:4 à 6 % de la hauteur, fin coupée (images noires)
+    video: '/videos/pour-qui-formuler.mp4',
+    image: '/videos/pour-qui-formuler.webp',
+    alt: 'Crème rose et crème blanche travaillées à la spatule',
     title: 'Vous voulez formuler vos propres soins',
     text: 'Comprendre les ingrédients, maîtriser les émulsions et créer des produits qui vous ressemblent.',
     to: '/formations',
     cta: 'Voir les formations',
   },
   {
-    image: '/who-brand.webp',
-    alt: 'Entrepreneuse noire souriante tenant un flacon ambré dans son atelier lumineux',
+    // Source : Drive, image00003.png
+    image: '/pour-qui-marque.webp',
+    alt: "Entrepreneuse noire à son bureau, entourée de ses produits et de colis prêts à l'envoi",
     title: 'Vous avez un projet de marque',
     text: 'De l\'idée au lancement : clarifier votre concept, vos produits et vos prochaines étapes.',
     to: '/offres/consultation-lancement-marque',
     cta: 'Voir la consultation',
   },
   {
-    image: '/who-hair.webp',
-    alt: 'Femme noire rayonnante aux cheveux crépus naturels, lumière dorée',
+    // Source : Drive, image00001.jpeg (recadrée au centre)
+    image: '/pour-qui-cheveux.webp',
+    alt: 'Avant et après : repousse des cheveux au niveau des tempes',
     title: 'Vous avez des difficultés avec vos cheveux',
     text: 'Sécheresse, casse, chute, démangeaisons : 10 recettes pour répondre à vos problématiques capillaires.',
     to: '/offres/guide-recettes-capillaires',
@@ -48,13 +53,17 @@ export function ForWho() {
                 trackName={`forwho_${i}`}
                 className="group relative block aspect-[4/5] overflow-hidden rounded-[22px] shadow-[0_30px_60px_-36px_rgba(58,42,34,0.65)] md:aspect-[3/4]"
               >
-                <img
-                  src={p.image}
-                  alt={p.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-110"
-                />
+                {'video' in p && p.video ? (
+                  <LoopVideo src={p.video} poster={p.image} className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-110" />
+                ) : (
+                  <img
+                    src={p.image}
+                    alt={p.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-110"
+                  />
+                )}
                 <span className="absolute inset-0 bg-gradient-to-t from-espresso/95 via-espresso/35 to-transparent transition-opacity duration-500" aria-hidden />
                 <div className="absolute inset-x-0 bottom-0 p-5">
                   <h3 className="font-serif-lc text-[23px] leading-[1.15] text-white-warm">{p.title}</h3>

@@ -35,8 +35,8 @@ export function AboutTeaser() {
       <div className="grid items-center gap-8 md:grid-cols-[400px_1fr] md:gap-14 lg:grid-cols-[460px_1fr]">
         <div ref={imgWrap} className="relative mx-auto w-full max-w-[420px] md:max-w-none">
           <img
-            src="/portrait-leslie.webp"
-            alt="Leslie Djoman, formulatrice, concentrée sur une émulsion dans son atelier, entourée de flacons ambrés"
+            src="/leslie-laboratoire.webp"
+            alt="Leslie Djoman souriante en blouse de laboratoire, versant une préparation dorée dans une casserole"
             loading="lazy"
             decoding="async"
             className="aspect-[4/5] w-full rounded-[22px] object-cover shadow-[0_40px_80px_-40px_rgba(58,42,34,0.6)]"

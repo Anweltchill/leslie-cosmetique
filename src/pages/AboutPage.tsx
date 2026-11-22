@@ -59,8 +59,8 @@ export function AboutPage() {
         <div className="grid items-start gap-8 md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] lg:gap-14">
           <div ref={imgRef} className="relative mx-auto w-full max-w-[380px] md:sticky md:top-24">
             <img
-              src="/portrait-leslie.webp"
-              alt="Leslie Djoman en train de formuler une émulsion dans un bécher, entourée de flacons ambrés et d'herbes séchées"
+              src="/leslie-laboratoire.webp"
+              alt="Leslie Djoman souriante en blouse de laboratoire, versant une préparation dorée dans une casserole"
               loading="eager"
               decoding="async"
               className="aspect-[4/5] w-full rounded-[22px] object-cover"

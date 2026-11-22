@@ -1,5 +1,6 @@
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { MagneticButton } from '@/components/MagneticButton';
+import { LoopVideo } from '@/components/LoopVideo';
 
 const steps = [
   {
@@ -20,8 +21,10 @@ const steps = [
     num: '03',
     title: 'J’avance en autonomie',
     text: 'Vous formulez, vous ajustez, vous progressez, avec des méthodes claires et des réponses concrètes.',
-    image: '/step-progress.webp',
-    alt: 'Mains versant une crème ivoire dans un pot en verre, geste sûr et accompli',
+    // Source : Drive « Leslie cosmetique media site », copy_8CD645C8-….mov — recadrage 4:3 à 22 % de la hauteur
+    video: '/videos/etape-3.mp4',
+    image: '/videos/etape-3.webp',
+    alt: 'Crème ivoire onctueuse remuée à la spatule dans un bol',
   },
 ];
 
@@ -54,7 +57,11 @@ export function HowItWorks() {
               className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-sand/70 bg-cream transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_44px_-30px_rgba(107,74,56,0.5)]"
             >
               <div className="relative w-full overflow-hidden">
-                <img src={s.image} alt={s.alt} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover transition-transform duration-[1.2s] group-hover:scale-110" />
+                {'video' in s && s.video ? (
+                  <LoopVideo src={s.video} poster={s.image} className="aspect-[4/3] w-full object-cover transition-transform duration-[1.2s] group-hover:scale-110" />
+                ) : (
+                  <img src={s.image} alt={s.alt} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover transition-transform duration-[1.2s] group-hover:scale-110" />
+                )}
                 <span className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white-warm font-serif-lc text-[16px] text-espresso shadow-md">{s.num}</span>
               </div>
               <div className="p-5">

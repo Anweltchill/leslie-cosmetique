@@ -3,6 +3,7 @@ import { Link } from '@/lib/router';
 import { formations, coachings, offerPath, formatPrice, type Offer } from '@/data/offers';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { CountdownLine } from '@/components/Countdown';
+import { LoopVideo } from '@/components/LoopVideo';
 
 function Family({
   icon: Icon,
@@ -11,6 +12,7 @@ function Family({
   text,
   image,
   imageAlt,
+  video,
   items,
   to,
   cta,
@@ -23,6 +25,8 @@ function Family({
   text: string;
   image: string;
   imageAlt: string;
+  /** Vidéo d'illustration (remplace l'image ; l'image reste l'aperçu si la vidéo ne joue pas). */
+  video?: { src: string; poster: string };
   items: Offer[];
   to: string;
   cta: string;
@@ -33,7 +37,11 @@ function Family({
     <Reveal delay={delay} className="h-full">
       <article className={`group flex h-full flex-col overflow-hidden rounded-[22px] ${dark ? 'bg-espresso text-white-warm' : 'border border-sand/70 bg-white-warm text-espresso'}`}>
         <Link to={to} trackName={`family_img_${title}`} className="relative block overflow-hidden">
-          <img src={image} alt={imageAlt} loading="lazy" decoding="async" className="aspect-[16/10] w-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+          {video ? (
+            <LoopVideo src={video.src} poster={video.poster} className="aspect-[16/10] w-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+          ) : (
+            <img src={image} alt={imageAlt} loading="lazy" decoding="async" className="aspect-[16/10] w-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+          )}
           <span className="absolute inset-0 bg-gradient-to-t from-espresso/85 via-espresso/10 to-transparent" aria-hidden />
           <span className="absolute inset-x-0 bottom-0 p-5 md:p-6">
             <span className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-sand">
@@ -110,8 +118,11 @@ export function Doors() {
           label="Apprendre seule"
           title="Formations"
           text="Des guides en ligne pour apprendre à formuler, à votre rythme."
-          image="/door-formations.webp"
-          imageAlt="Femme noire élégante suivant une formation en ligne, entourée de flacons ambrés et de plantes séchées"
+          image="/videos/porte-formations.webp"
+          imageAlt="Application d'une crème capillaire maison sur des cheveux crépus"
+          // Source : Drive « Leslie cosmetique media site », copy_C84358A3-….mov (portrait 4K).
+          // Cadrage 16:10 : plan 1 (crème sur les doigts) à 34 % de la hauteur, plan 2 (cheveux) à 10 %.
+          video={{ src: '/videos/porte-formations.mp4', poster: '/videos/porte-formations.webp' }}
           items={formations}
           to="/formations"
           cta="Voir les formations"

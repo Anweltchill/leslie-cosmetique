@@ -133,8 +133,11 @@ export function Doors() {
           label="Être accompagnée"
           title="Coachings"
           text="Un accompagnement individuel avec Leslie pour vos formules, votre marque, ou pour vous orienter."
-          image="/door-coachings.webp"
-          imageAlt="Femme noire tenant un pot de crème lors d'un échange en visio, ambiance chaleureuse"
+          image="/videos/porte-coachings.webp"
+          imageAlt="Femme noire parlant face caméra en appliquant un soin sur sa main"
+          // Source : Drive « Leslie cosmetique media site », copy_827EAC12-….mov (portrait 4K, un seul plan).
+          // Cadrage 16:10 fixe à 25 % de la hauteur (gros plan visage, yeux au-dessus du texte même sur mobile).
+          video={{ src: '/videos/porte-coachings.mp4', poster: '/videos/porte-coachings.webp' }}
           items={coachings}
           to="/coachings"
           cta="Voir les coachings"

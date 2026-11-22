@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from '@/lib/anim';
 import { MagneticButton } from '@/components/MagneticButton';
+import { LoopVideo } from '@/components/LoopVideo';
 import { media, photo, photoSet } from '@/data/media';
 
 const moments = ['Votre première crème', 'Votre routine capillaire', 'Votre propre gamme'];
@@ -76,13 +77,8 @@ export function VisionBand() {
 
         <div className="vision-inset relative mx-auto hidden w-full max-w-[320px] md:block">
           <div className="overflow-hidden rounded-[22px] border-4 border-white-warm shadow-[0_40px_80px_-30px_rgba(0,0,0,0.7)]">
-            <img
-              src={photo(media.vision2, 900)}
-              alt="Femme aux tresses appliquant une huile précieuse sur son poignet"
-              loading="lazy"
-              decoding="async"
-              className="aspect-[4/5] w-full object-cover"
-            />
+            {/* Source : Drive « Leslie cosmetique media site », copy_8E508A28-….mov — recadrage 4:5 à 8 % de la hauteur */}
+            <LoopVideo src="/videos/projetez-vous.mp4" poster="/videos/projetez-vous.webp" className="aspect-[4/5] w-full object-cover" />
           </div>
           <div className="absolute -bottom-5 -left-6 rounded-[14px] bg-white-warm px-4 py-3 shadow-lg">
             <span className="block text-[11px] uppercase tracking-[0.14em] text-caramel">Fait maison</span>

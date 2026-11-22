@@ -2,17 +2,16 @@ import { useRef } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { track } from '@/lib/track';
+import { LoopVideo } from '@/components/LoopVideo';
 
+// Vidéos de Leslie (Drive « Leslie cosmetique media site », 5 fichiers envoyés le 22/11 entre 20 h 23 et 20 h 29),
+// recadrées en 4:5. Cases retirées : Gels translucides, Plantes séchées, Émulsions, Actifs précieux.
 const textures = [
-  { src: '/texture-shea.webp', alt: 'Beurre de karité brut dans un bol en bois', caption: 'Beurre de karité' },
-  { src: '/texture-whipped.webp', alt: 'Crème fouettée ivoire aux volutes soyeuses', caption: 'Crèmes fouettées' },
-  { src: '/texture-gel.webp', alt: 'Gel cosmétique translucide ambré aux fines bulles', caption: 'Gels translucides' },
-  { src: '/texture-oils.webp', alt: 'Huiles végétales dorées dans des flacons en verre', caption: 'Huiles dorées' },
-  { src: '/texture-wax.webp', alt: "Perles de cire d'abeille dans un bol en céramique", caption: "Cire d'abeille" },
-  { src: '/texture-clay.webp', alt: "Poudre fine d'argile beige et sa cuillère en bois", caption: 'Argiles douces' },
-  { src: '/texture-botanicals.webp', alt: 'Pétales et plantes séchées sur lin beige', caption: 'Plantes séchées' },
-  { src: '/texture-emulsion.webp', alt: 'Émulsion ivoire qui coule en rubans brillants', caption: 'Émulsions' },
-  { src: '/texture-pipette.webp', alt: "Flacon à pipette ambré laissant tomber une goutte d'huile", caption: 'Actifs précieux' },
+  { video: '/videos/matiere-karite.mp4', poster: '/videos/matiere-karite.webp', alt: 'Morceaux de beurre de karité versés dans un bol en inox', caption: 'Beurre de karité' },
+  { video: '/videos/matiere-cremes-fouettees.mp4', poster: '/videos/matiere-cremes-fouettees.webp', alt: 'Crème blanche versée puis travaillée à la spatule dans un bol', caption: 'Crèmes fouettées' },
+  { video: '/videos/matiere-huiles.mp4', poster: '/videos/matiere-huiles.webp', alt: 'Huile végétale dorée versée dans un flacon à travers un entonnoir', caption: 'Huiles dorées' },
+  { video: '/videos/matiere-emulsifiant.mp4', poster: '/videos/matiere-emulsifiant.webp', alt: "Pastilles blanches d'émulsifiant versées dans un bol en inox", caption: 'Émulsifiant' },
+  { video: '/videos/matiere-poudre-plantes.mp4', poster: '/videos/matiere-poudre-plantes.webp', alt: 'Poudre de plante verte versée à la cuillère dans un bol', caption: 'Poudre de plante' },
 ];
 
 const marqueeWords = ['Émulsions', 'Textures', 'Actifs', 'Équilibre', 'Stabilité', 'Autonomie'];
@@ -40,7 +39,7 @@ export function TextureGallery() {
           </MaskLines>
           <Reveal delay={0.1}>
             <p className="mt-3 text-[14px] leading-relaxed text-brown">
-              Beurres, huiles, argiles, actifs : apprenez à connaître chaque ingrédient pour créer des soins qui fonctionnent vraiment.
+              Beurres, huiles, émulsifiants, poudres de plantes : apprenez à connaître chaque ingrédient pour créer des soins qui fonctionnent vraiment.
             </p>
             <div className="mt-5 flex gap-2">
               <button
@@ -70,15 +69,9 @@ export function TextureGallery() {
           aria-label="Galerie de textures, faites glisser pour parcourir"
         >
           {textures.map((t, i) => (
-            <figure key={t.src} className={`group w-[220px] shrink-0 snap-start md:w-[280px] ${i % 2 === 1 ? 'md:mt-10' : ''}`}>
+            <figure key={t.video} className={`group w-[220px] shrink-0 snap-start md:w-[280px] ${i % 2 === 1 ? 'md:mt-10' : ''}`}>
               <div className="overflow-hidden rounded-[20px] shadow-[0_24px_50px_-32px_rgba(58,42,34,0.6)]">
-                <img
-                  src={t.src}
-                  alt={t.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <LoopVideo src={t.video} poster={t.poster} className="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <figcaption className="mt-3 font-serif-lc text-[18px] text-espresso">{t.caption}</figcaption>
             </figure>

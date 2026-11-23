@@ -250,8 +250,10 @@ export function OfferPage({ slug }: { slug: string }) {
               </Reveal>
             )}
 
-            <div className="grid gap-8 md:grid-cols-2">
-              <div>
+            {/* Ordinateur : visuels à gauche (alternance avec le haut de page), « En détail » à droite.
+                Mobile : « En détail », puis visuels. */}
+            <div className={offer.gallery ? 'grid gap-8 md:grid-cols-2 md:items-start' : ''}>
+              <div className={offer.gallery ? '' : 'max-w-[680px]'}>
                 <h2 className="font-serif-lc text-[24px] text-espresso">En détail</h2>
                 {offer.paragraphs.map((b, i) => (
                   <Reveal key={i} delay={i * 0.05}>
@@ -259,30 +261,34 @@ export function OfferPage({ slug }: { slug: string }) {
                   </Reveal>
                 ))}
               </div>
-              <Reveal delay={0.08}>
-                <div className="space-y-4">
-                {offer.gallery && <OfferGallery items={offer.gallery} />}
-                <div className="rounded-[18px] bg-nude/60 p-5 md:p-6">
-                  <h2 className="font-serif-lc text-[22px] text-espresso">{offer.outcomesTitle ?? 'Ce que vous allez obtenir'}</h2>
-                  {offer.outcomesIntro && <p className="mt-2 text-[13.5px] leading-relaxed text-brown">{offer.outcomesIntro}</p>}
-                  <ul className="mt-4 space-y-2.5">
-                    {offer.outcomes.map((o) => (
-                      <li key={o} className="flex items-start gap-2.5 text-[14px] text-espresso">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-espresso text-white-warm">
-                          <Check size={11} strokeWidth={2.5} aria-hidden />
-                        </span>
-                        {o}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mt-5 flex items-center gap-2 border-t border-sand pt-4 text-[13px] text-espresso">
-                    {isCoaching ? <Clock3 size={15} className="shrink-0 text-caramel" aria-hidden /> : <MonitorPlay size={15} className="shrink-0 text-caramel" aria-hidden />}
-                    {offer.format}
-                  </p>
-                </div>
-                </div>
-              </Reveal>
+              {offer.gallery && (
+                <Reveal delay={0.08} className="md:sticky md:top-24 md:order-first">
+                  <OfferGallery items={offer.gallery} />
+                </Reveal>
+              )}
             </div>
+
+            {/* « Ce que vous allez obtenir » : sur toute la largeur, points sur deux colonnes */}
+            <Reveal delay={0.08}>
+              <div className="mt-8 rounded-[18px] bg-nude/60 p-5 md:p-6">
+                <h2 className="font-serif-lc text-[22px] text-espresso">{offer.outcomesTitle ?? 'Ce que vous allez obtenir'}</h2>
+                {offer.outcomesIntro && <p className="mt-1 text-[13.5px] leading-relaxed text-brown">{offer.outcomesIntro}</p>}
+                <ul className="mt-4 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
+                  {offer.outcomes.map((o) => (
+                    <li key={o} className="flex items-start gap-2.5 text-[14px] text-espresso">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-espresso text-white-warm">
+                        <Check size={11} strokeWidth={2.5} aria-hidden />
+                      </span>
+                      {o}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 flex items-center gap-2 border-t border-sand pt-3 text-[13px] text-espresso">
+                  {isCoaching ? <Clock3 size={15} className="shrink-0 text-caramel" aria-hidden /> : <MonitorPlay size={15} className="shrink-0 text-caramel" aria-hidden />}
+                  {offer.format}
+                </p>
+              </div>
+            </Reveal>
 
             {offer.modules && (
               <Reveal delay={0.05}>

@@ -322,7 +322,8 @@ const allOffers: Offer[] = [
     link: site.links.resaCoachingFormulation,
     booking: 'calendar',
     image: '/offre-4-coaching-formulation.webp',
-    imageAlt: "Mains d'une femme noire mélangeant une émulsion crémeuse dans un bécher",
+    // Image de Leslie (Drive, 23/11 à 8 h 55) : « image00001 (1).png »
+    imageAlt: 'Femme noire souriante à son bureau d’atelier, entourée de pots de crème, flacons, balance et carnet de formules',
     faq: [
       { q: 'Comment se déroule le coaching ?', a: 'En visio, pendant 1 heure, à un créneau qui vous convient.' },
       { q: "Est-ce accessible depuis l'Afrique ?", a: 'Oui, la visio fonctionne partout avec une connexion internet.' },

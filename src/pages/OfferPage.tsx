@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BellRing, CalendarDays, Check, Clock3, Euro, Hourglass, MonitorPlay, PackageCheck, ShoppingBag, Sparkles } from 'lucide-react';
-import { getOffer, getVisibleOffer, offerPath, familyPath, formatPrice, usesCalendar, type Block, type ListItem } from '@/data/offers';
+import { getOffer, getVisibleOffer, offerPath, familyPath, formatPrice, usesCalendar, type Block, type ListItem, type Offer } from '@/data/offers';
 import { site } from '@/data/site';
 import { useSeo, useJsonLd } from '@/lib/seo';
 import { offerJsonLd } from '@/lib/offerSchema';
@@ -46,6 +46,37 @@ function BlockView({ block }: { block: Block }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+type GalleryItem = NonNullable<Offer['gallery']>[number];
+const ratioValue = (r: string) => {
+  const [w, h] = r.split('/').map((n) => Number(n.trim()));
+  return w / h;
+};
+
+/**
+ * Visuels de l'offre, en haut de la colonne « Ce que vous allez obtenir ».
+ * Formats verticaux ou carrés : côte à côte à la même hauteur ; formats horizontaux : l'un sous l'autre.
+ */
+function OfferGallery({ items }: { items: GalleryItem[] }) {
+  const sideBySide = items.reduce((sum, g) => sum + ratioValue(g.ratio), 0) <= 1.8;
+  return (
+    <div className={sideBySide ? 'flex gap-3' : 'space-y-3'}>
+      {items.map((g) => (
+        <figure
+          key={g.src}
+          className="overflow-hidden rounded-[16px] shadow-[0_24px_50px_-32px_rgba(58,42,34,0.6)]"
+          style={sideBySide ? { flex: `${ratioValue(g.ratio)} 1 0%`, aspectRatio: g.ratio } : { aspectRatio: g.ratio }}
+        >
+          {g.src.endsWith('.mp4') ? (
+            <LoopVideo src={g.src} poster={g.poster ?? ''} className="h-full w-full object-cover" />
+          ) : (
+            <img src={g.src} alt={g.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+          )}
+        </figure>
+      ))}
+    </div>
   );
 }
 
@@ -229,6 +260,8 @@ export function OfferPage({ slug }: { slug: string }) {
                 ))}
               </div>
               <Reveal delay={0.08}>
+                <div className="space-y-4">
+                {offer.gallery && <OfferGallery items={offer.gallery} />}
                 <div className="rounded-[18px] bg-nude/60 p-5 md:p-6">
                   <h2 className="font-serif-lc text-[22px] text-espresso">{offer.outcomesTitle ?? 'Ce que vous allez obtenir'}</h2>
                   {offer.outcomesIntro && <p className="mt-2 text-[13.5px] leading-relaxed text-brown">{offer.outcomesIntro}</p>}
@@ -247,31 +280,9 @@ export function OfferPage({ slug }: { slug: string }) {
                     {offer.format}
                   </p>
                 </div>
-              </Reveal>
-            </div>
-
-            {offer.gallery && (
-              <Reveal delay={0.05}>
-                <div className="mt-10">
-                  <h2 className="font-serif-lc text-[24px] text-espresso">En images</h2>
-                  <div className="-mx-5 mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
-                    {offer.gallery.map((g) => (
-                      <figure
-                        key={g.src}
-                        className="h-[300px] shrink-0 snap-start overflow-hidden rounded-[18px] shadow-[0_24px_50px_-32px_rgba(58,42,34,0.6)] sm:h-[380px] lg:h-[420px]"
-                        style={{ aspectRatio: g.ratio }}
-                      >
-                        {g.src.endsWith('.mp4') ? (
-                          <LoopVideo src={g.src} poster={g.poster ?? ''} className="h-full w-full object-cover" />
-                        ) : (
-                          <img src={g.src} alt={g.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
-                        )}
-                      </figure>
-                    ))}
-                  </div>
                 </div>
               </Reveal>
-            )}
+            </div>
 
             {offer.modules && (
               <Reveal delay={0.05}>

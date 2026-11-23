@@ -278,8 +278,14 @@ const allOffers: Offer[] = [
     ],
     cta: 'Obtenir le guide',
     link: site.links.payGuideFormulation,
+    // Visuels de Leslie (Drive, 23/11 à 8 h 47) : IMG-20261123-WA0009 en image d'offre,
+    // WA0011 et WA0010 dans la colonne « Ce que vous allez obtenir ».
     image: '/offre-3-guide-formulation.webp',
-    imageAlt: "Guide de formulation ouvert sur une table en bois, avec balance de précision, bécher, beurre de karité et flacon d'huile",
+    imageAlt: 'Flacon de shampoing, pot de crème et pot de gommage faits maison, posés sur une serviette en lin',
+    gallery: [
+      { src: '/offre-3-guide-formulation-galerie-1.webp', alt: 'Main tenant un pot de crème onctueuse faite maison', ratio: '4 / 3' },
+      { src: '/offre-3-guide-formulation-galerie-2.webp', alt: 'Shampoing maison versé dans un bol en verre', ratio: '4 / 3' },
+    ],
     faq: [
       { q: 'Le guide est-il adapté si je débute ?', a: "Oui, il a été conçu pour vous accompagner pas à pas dans l'apprentissage de la formulation cosmétique, même si vous débutez." },
       { q: 'Le guide est-il accessible partout dans le monde ?', a: 'Oui, il est 100 % en ligne et accessible depuis toute la francophonie.' },

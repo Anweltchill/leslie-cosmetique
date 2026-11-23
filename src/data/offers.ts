@@ -402,8 +402,9 @@ const allOffers: Offer[] = [
     cta: 'Réserver mon audit',
     link: site.links.resaAudit,
     booking: 'link',
+    // Image de Leslie (Drive, 23/11 à 9 h 08) : image00001.png, recadrée en 4:3 sur le visage
     image: '/offre-6-audit.webp',
-    imageAlt: 'Femme noire souriante prenant des notes devant son ordinateur portable, dans un intérieur aux tons crème',
+    imageAlt: 'Femme noire pensive, la main sous le menton, qui se demande quel accompagnement choisir',
     faq: [
       { q: "Comment se déroule l'audit ?", a: "C'est un appel d'orientation de 30 minutes : vous m'expliquez brièvement votre situation et vos objectifs." },
       { q: "Que se passe-t-il à l'issue de l'audit ?", a: 'Je vous oriente vers la formation, le guide ou l’accompagnement le plus adapté à votre projet.' },

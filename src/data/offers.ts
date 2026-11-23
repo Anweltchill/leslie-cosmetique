@@ -401,7 +401,7 @@ const allOffers: Offer[] = [
     ],
     cta: 'Réserver mon audit',
     link: site.links.resaAudit,
-    booking: 'link',
+    booking: 'calendar',
     // Image de Leslie (Drive, 23/11 à 9 h 08) : image00001.png, recadrée en 4:3 sur le visage
     image: '/offre-6-audit.webp',
     imageAlt: 'Femme noire pensive, la main sous le menton, qui se demande quel accompagnement choisir',

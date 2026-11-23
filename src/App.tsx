@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { RouterProvider, useRouter } from '@/lib/router';
 import { initSmoothScroll, scrollToTop, ScrollTrigger } from '@/lib/anim';
-import { initScrollDepthTracking } from '@/lib/track';
+import { initScrollDepthTracking, track } from '@/lib/track';
 import { injectJsonLd } from '@/lib/seo';
 import { promoActive } from '@/lib/promo';
 import { Navbar } from '@/components/Navbar';
@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { Intro } from '@/components/Intro';
 import { Cursor } from '@/components/Cursor';
 import { UrgencyPopup } from '@/components/UrgencyPopup';
+import { QuestionWidget } from '@/components/QuestionWidget';
 import { HomePage } from '@/pages/HomePage';
 import { FormationsPage } from '@/pages/FormationsPage';
 import { CoachingsPage } from '@/pages/CoachingsPage';
@@ -85,13 +86,30 @@ function Routes({ introDone }: { introDone: boolean }) {
   );
 }
 
+// Espace admin chargé à part (n'alourdit pas le site public).
+const AdminApp = lazy(() => import('@/admin/AdminApp'));
+
 function AppInner() {
+  const { path } = useRouter();
+  if (path === '/admin' || path.startsWith('/admin/')) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-cream" />}>
+        <AdminApp />
+      </Suspense>
+    );
+  }
+  return <PublicSite />;
+}
+
+function PublicSite() {
   const [introDone, setIntroDone] = useState(false);
   const finishIntro = useCallback(() => setIntroDone(true), []);
 
   useEffect(() => {
     initSmoothScroll();
     injectJsonLd();
+    // Page d'arrivée (les changements de page suivants sont suivis par le routeur).
+    track('page_view', { path: window.location.pathname });
   }, []);
 
   useEffect(() => initScrollDepthTracking(), []);
@@ -105,6 +123,7 @@ function AppInner() {
       <Routes introDone={introDone} />
       <Footer />
       <UrgencyPopup />
+      <QuestionWidget />
       <Cursor />
     </div>
   );

@@ -33,7 +33,7 @@ export function slotsForDay(day: Date): Date[] {
 }
 
 export async function fetchTakenSlots(from: Date, to: Date): Promise<Set<number>> {
-  const { data, error } = await supabase.rpc('get_taken_slots', {
+  const { data, error } = await supabase.rpc('lc_get_taken_slots', {
     range_from: from.toISOString(),
     range_to: to.toISOString(),
   });
@@ -45,7 +45,7 @@ export async function fetchTakenSlots(from: Date, to: Date): Promise<Set<number>
 export type BookingResult = { ok: true } | { ok: false; reason: 'taken' | 'error' };
 
 export async function createBooking(input: BookingInput): Promise<BookingResult> {
-  const { error } = await supabase.from('booking_requests').insert({
+  const { error } = await supabase.from('lc_booking_requests').insert({
     offer_slug: input.offerSlug,
     starts_at: input.startsAt.toISOString(),
     full_name: input.fullName.trim(),

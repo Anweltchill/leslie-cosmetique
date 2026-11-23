@@ -5,6 +5,7 @@ import { Link } from '@/lib/router';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { CountdownLine } from '@/components/Countdown';
 import { AuditHint } from '@/components/AuditPromo';
+import { WasPrice, PromoBadge } from '@/components/Promo';
 import { ArrowRight, Clock3, BadgeCheck, Check, MonitorPlay } from 'lucide-react';
 
 export function FormationsPage() {
@@ -72,6 +73,10 @@ export function FormationsPage() {
               </div>
               <div className="flex items-center justify-between gap-3 border-t border-sand/60 pt-4 md:flex-col md:items-start md:border-l md:border-t-0 md:pl-6 md:pt-0">
                 <div>
+                  <span className="mb-2 flex items-center gap-2">
+                    <WasPrice price={o.price} className="text-[15px] text-brown" />
+                    <PromoBadge />
+                  </span>
                   <span className="font-serif-lc text-[30px] font-medium leading-none text-espresso">{formatPrice(o.price)}</span>
                   {o.priceNote && <span className="ml-1.5 text-[12px] text-brown">{o.priceNote}</span>}
                   <p className="mt-1.5 flex items-center gap-1.5 text-[12px] text-brown">

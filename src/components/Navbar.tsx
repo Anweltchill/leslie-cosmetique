@@ -3,6 +3,7 @@ import { Menu, X, ArrowRight } from 'lucide-react';
 import { Link, useRouter } from '@/lib/router';
 import { site } from '@/data/site';
 import { MagneticButton } from './MagneticButton';
+import { PromoBanner } from './Promo';
 
 const links = [
   { to: '/', label: 'Accueil' },
@@ -52,6 +53,7 @@ export function Navbar() {
           scrolled ? 'bg-cream/95 shadow-[0_1px_0_rgba(217,196,172,0.7)] backdrop-blur-md' : 'bg-cream'
         }`}
       >
+        <PromoBanner />
         <nav className="mx-auto flex h-[64px] max-w-[1120px] items-center justify-between px-5 md:px-8" aria-label="Navigation principale">
           <Link to="/" className="group flex items-center gap-3" ariaLabel="Leslie Cosmétique — Accueil" trackName="logo">
             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-espresso font-serif-lc text-[18px] font-medium leading-none text-white-warm transition-transform duration-500 group-hover:rotate-[-8deg]">

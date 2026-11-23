@@ -2,6 +2,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { type Offer, offerPath, formatPrice } from '@/data/offers';
 import { Link } from '@/lib/router';
 import { CountdownLine } from '@/components/Countdown';
+import { WasPrice, PromoBadge } from '@/components/Promo';
 
 interface Props {
   offer: Offer;
@@ -40,8 +41,10 @@ export function OfferCard({ offer, index = 0 }: Props) {
         {offer.enrollment && <CountdownLine offer={offer} where={`offer_card_${offer.slug}`} />}
         <div className="mt-auto flex items-end justify-between pt-2.5">
           <div>
-            <p className="font-serif-lc text-[22px] font-medium leading-none text-espresso transition-transform duration-300 group-hover:-translate-y-0.5">
+            <p className="flex items-center gap-2 font-serif-lc text-[22px] font-medium leading-none text-espresso transition-transform duration-300 group-hover:-translate-y-0.5">
               {formatPrice(offer.price)}
+              <WasPrice price={offer.price} className="font-sans text-[13px] font-normal text-brown" />
+              <PromoBadge />
             </p>
             {(offer.duration || offer.priceNote) && (
               <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-brown">{offer.duration ?? offer.priceNote}</p>

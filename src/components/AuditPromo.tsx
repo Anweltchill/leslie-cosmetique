@@ -4,6 +4,7 @@ import { Link } from '@/lib/router';
 import { track } from '@/lib/track';
 import { MagneticButton } from '@/components/MagneticButton';
 import { Reveal } from '@/components/Reveal';
+import { WasPrice } from '@/components/Promo';
 
 /** Bloc d'accueil « Vous ne savez pas par où commencer ? » (point d'entrée vers l'audit). */
 export function AuditHomeBlock() {
@@ -24,7 +25,7 @@ export function AuditHomeBlock() {
               <h2 className="font-serif-lc text-[24px] leading-tight text-espresso md:text-[28px]">Vous ne savez pas par où commencer ?</h2>
               <p className="mt-2 max-w-[560px] text-[14px] leading-relaxed text-brown">{audit.paragraphs[0] as string}</p>
               <p className="mt-2 text-[12.5px] font-medium uppercase tracking-[0.12em] text-caramel">
-                Audit · {audit.duration} · {formatPrice(audit.price)}
+                Audit · {audit.duration} · <WasPrice price={audit.price} className="mr-1" />{formatPrice(audit.price)}
               </p>
             </div>
           </div>
@@ -61,7 +62,7 @@ export function AuditHint({ where }: { where: string }) {
           <span>
             <span className="block font-serif-lc text-[21px] leading-tight text-espresso">Pas sûre de votre choix ?</span>
             <span className="mt-1 block max-w-[560px] text-[13.5px] leading-snug text-brown">
-              Un audit de {audit.duration} ({formatPrice(audit.price)}) pour vous orienter vers la formation, le guide ou l’accompagnement le plus adapté à votre projet.
+              Un audit de {audit.duration} (<WasPrice price={audit.price} className="mr-1" />{formatPrice(audit.price)}) pour vous orienter vers la formation, le guide ou l’accompagnement le plus adapté à votre projet.
             </span>
           </span>
         </span>

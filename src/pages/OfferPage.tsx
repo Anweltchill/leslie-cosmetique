@@ -13,6 +13,7 @@ import { FaqAccordion } from '@/components/FaqAccordion';
 import { ModulesAccordion } from '@/components/ModulesAccordion';
 import { CountdownLine, CountdownPanel } from '@/components/Countdown';
 import { LoopVideo } from '@/components/LoopVideo';
+import { WasPrice, PromoBadge } from '@/components/Promo';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 
 const btnCls =
@@ -191,9 +192,11 @@ export function OfferPage({ slug }: { slug: string }) {
               <p className="mt-3 max-w-[480px] font-serif-lc text-[19px] italic leading-snug text-brown md:text-[21px]">{offer.tagline}</p>
               {offer.hook && <p className="mt-4 max-w-[480px] text-[15px] leading-relaxed text-espresso">{offer.hook}</p>}
               <div className="mt-5 flex flex-wrap gap-2">
-                <span className="rounded-full bg-espresso px-3.5 py-1.5 text-[12.5px] font-medium text-white-warm">
-                  {formatPrice(offer.price)}{offer.priceNote ? ` ${offer.priceNote}` : ''}
+                <span className="inline-flex items-center gap-2 rounded-full bg-espresso px-3.5 py-1.5 text-[12.5px] font-medium text-white-warm">
+                  <WasPrice price={offer.price} className="font-normal" />
+                  <span>{formatPrice(offer.price)}{offer.priceNote ? ` ${offer.priceNote}` : ''}</span>
                 </span>
+                <PromoBadge className="!px-3.5 !py-1.5 !text-[12.5px]" />
                 {offer.durationLabel && <span className="rounded-full bg-nude px-3.5 py-1.5 text-[12.5px] font-medium text-espresso">{offer.durationLabel}</span>}
                 {!isCoaching && <span className="rounded-full bg-nude px-3.5 py-1.5 text-[12.5px] font-medium text-espresso">{offer.channel}</span>}
                 {durationChip && <span className="rounded-full bg-nude px-3.5 py-1.5 text-[12.5px] font-medium text-espresso">{durationChip}</span>}
@@ -262,7 +265,7 @@ export function OfferPage({ slug }: { slug: string }) {
                 ))}
               </div>
               {offer.gallery && (
-                <Reveal delay={0.08} className="md:sticky md:top-24 md:order-first">
+                <Reveal delay={0.08} className="md:sticky md:top-28 md:order-first">
                   <OfferGallery items={offer.gallery} />
                 </Reveal>
               )}
@@ -339,10 +342,14 @@ export function OfferPage({ slug }: { slug: string }) {
           </div>
 
           <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-[20px] border border-sand bg-cream p-6">
-              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-brown">{asideLabel}</p>
-              <div className="mt-3 flex items-baseline gap-2.5">
+            <div className="sticky top-28 rounded-[20px] border border-sand bg-cream p-6">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-brown">{asideLabel}</p>
+                <PromoBadge />
+              </div>
+              <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                 <span className="font-serif-lc text-[38px] font-medium leading-none text-espresso">{formatPrice(offer.price)}</span>
+                <WasPrice price={offer.price} className="font-serif-lc text-[20px] text-brown" />
                 {offer.duration && <span className="text-[12.5px] font-medium uppercase tracking-[0.12em] text-caramel">{offer.duration}</span>}
                 {offer.priceNote && <span className="text-[12.5px] text-brown">{offer.priceNote}</span>}
               </div>
@@ -358,7 +365,9 @@ export function OfferPage({ slug }: { slug: string }) {
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-sand bg-cream/95 px-5 py-3 backdrop-blur-md lg:hidden">
         <div className="mx-auto flex max-w-[560px] items-center justify-between gap-4">
           <div className="shrink-0">
-            <p className="font-serif-lc text-[22px] font-medium leading-none text-espresso">{formatPrice(offer.price)}</p>
+            <p className="font-serif-lc text-[22px] font-medium leading-none text-espresso">
+              {formatPrice(offer.price)} <WasPrice price={offer.price} className="text-[14px] text-brown" />
+            </p>
             {(offer.duration || offer.priceNote) && (
               <p className="mt-0.5 text-[11px] uppercase tracking-[0.12em] text-caramel">{offer.duration ?? offer.priceNote}</p>
             )}

@@ -57,7 +57,7 @@ export function AboutPage() {
 
       <section className="mx-auto max-w-[1120px] px-5 md:px-8" aria-label="Portrait et parcours">
         <div className="grid items-start gap-8 md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] lg:gap-14">
-          <div ref={imgRef} className="relative mx-auto w-full max-w-[380px] md:sticky md:top-24">
+          <div ref={imgRef} className="relative mx-auto w-full max-w-[380px] md:sticky md:top-28">
             <img
               src="/leslie-laboratoire.webp"
               alt="Leslie Djoman souriante en blouse de laboratoire, versant une préparation dorée dans une casserole"

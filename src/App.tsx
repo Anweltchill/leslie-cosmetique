@@ -3,6 +3,7 @@ import { RouterProvider, useRouter } from '@/lib/router';
 import { initSmoothScroll, scrollToTop, ScrollTrigger } from '@/lib/anim';
 import { initScrollDepthTracking } from '@/lib/track';
 import { injectJsonLd } from '@/lib/seo';
+import { promoActive } from '@/lib/promo';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Intro } from '@/components/Intro';
@@ -78,7 +79,7 @@ function Routes({ introDone }: { introDone: boolean }) {
   }, [path, introDone]);
 
   return (
-    <main key={path} className="page-enter">
+    <main key={path} className={`page-enter ${promoActive ? 'pt-8' : ''}`}>
       {page}
     </main>
   );

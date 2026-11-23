@@ -4,6 +4,7 @@ import { formations, coachings, offerPath, formatPrice, type Offer } from '@/dat
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { CountdownLine } from '@/components/Countdown';
 import { LoopVideo } from '@/components/LoopVideo';
+import { WasPrice } from '@/components/Promo';
 
 function Family({
   icon: Icon,
@@ -70,7 +71,10 @@ function Family({
                   )}
                 </span>
                 <span className="flex shrink-0 items-center gap-3">
-                  <span className="font-serif-lc text-[20px] font-medium">{formatPrice(o.price)}</span>
+                  <span className="flex flex-col items-end leading-none">
+                    <WasPrice price={o.price} className="mb-1 text-[12px]" />
+                    <span className="font-serif-lc text-[20px] font-medium">{formatPrice(o.price)}</span>
+                  </span>
                   <span className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 group-hover:rotate-45 ${dark ? 'bg-white-warm text-espresso' : 'bg-espresso text-white-warm'}`}>
                     <ArrowUpRight size={14} strokeWidth={1.8} aria-hidden />
                   </span>

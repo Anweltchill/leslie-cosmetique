@@ -5,6 +5,7 @@ import { useSeo } from '@/lib/seo';
 import { Link, useRouter } from '@/lib/router';
 import { track } from '@/lib/track';
 import { createBooking, fetchTakenSlots } from '@/lib/booking';
+import { WasPrice } from '@/components/Promo';
 import { BookingCalendar, timeFmt } from '@/components/booking/BookingCalendar';
 
 const longFmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -127,7 +128,9 @@ export function BookingPage({ slug }: { slug?: string }) {
                     <img src={offer.image} alt="" className="h-14 w-14 rounded-[12px] object-cover" />
                     <div>
                       <p className="font-serif-lc text-[19px] leading-tight text-espresso">{offer.name}</p>
-                      <p className="text-[13px] font-medium text-caramel">{formatPrice(offer.price)}</p>
+                      <p className="text-[13px] font-medium text-caramel">
+                        {formatPrice(offer.price)} <WasPrice price={offer.price} className="ml-1 font-normal text-brown" />
+                      </p>
                     </div>
                   </div>
                   <ul className="mt-4 space-y-2 border-t border-sand/60 pt-4 text-[13.5px] text-espresso">
@@ -202,7 +205,9 @@ export function BookingPage({ slug }: { slug?: string }) {
                         <p className="font-serif-lc text-[19px] leading-tight text-espresso">{o.name}</p>
                         <p className="mt-1.5 text-[13px] leading-snug text-brown">{o.tagline}</p>
                         <p className="mt-3 flex items-center justify-between text-[13px] font-medium text-espresso">
-                          {formatPrice(o.price)} / {o.duration}
+                          <span>
+                            {formatPrice(o.price)} <WasPrice price={o.price} className="mx-1 font-normal text-brown" /> / {o.duration}
+                          </span>
                           <ArrowRight size={15} className="text-caramel transition-transform group-hover:translate-x-1" aria-hidden />
                         </p>
                       </div>
@@ -221,7 +226,9 @@ export function BookingPage({ slug }: { slug?: string }) {
                         <p className="font-serif-lc text-[19px] leading-tight text-espresso">{o.name}</p>
                         <p className="mt-1.5 text-[13px] leading-snug text-brown">{o.tagline}</p>
                         <p className="mt-3 flex items-center justify-between text-[13px] font-medium text-espresso">
-                          {formatPrice(o.price)} / {o.duration}
+                          <span>
+                            {formatPrice(o.price)} <WasPrice price={o.price} className="mx-1 font-normal text-brown" /> / {o.duration}
+                          </span>
                           <ArrowRight size={15} className="text-caramel transition-transform group-hover:translate-x-1" aria-hidden />
                         </p>
                       </div>

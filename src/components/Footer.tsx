@@ -1,4 +1,5 @@
 import { Instagram, Music2, Mail, ArrowUp, CalendarDays } from 'lucide-react';
+import { WasPrice } from '@/components/Promo';
 import { Link } from '@/lib/router';
 import { site } from '@/data/site';
 import { formations, coachings, offerPath, formatPrice } from '@/data/offers';
@@ -61,7 +62,7 @@ export function Footer() {
               {formations.map((o) => (
                 <li key={o.slug} className="flex items-baseline justify-between gap-3 pr-4">
                   <Link to={offerPath(o)} className={linkCls}>{o.shortName}</Link>
-                  <span className="whitespace-nowrap text-[12.5px] text-sand">{formatPrice(o.price)}</span>
+                  <span className="whitespace-nowrap text-[12.5px] text-sand"><WasPrice price={o.price} className="mr-1.5" />{formatPrice(o.price)}</span>
                 </li>
               ))}
               <li><Link to="/formations" className="link-line text-[13px] font-medium text-white-warm">Toutes les formations</Link></li>
@@ -74,7 +75,7 @@ export function Footer() {
               {coachings.map((o) => (
                 <li key={o.slug} className="flex items-baseline justify-between gap-3 pr-4">
                   <Link to={offerPath(o)} className={linkCls}>{o.shortName}</Link>
-                  <span className="whitespace-nowrap text-[12.5px] text-sand">{formatPrice(o.price)}</span>
+                  <span className="whitespace-nowrap text-[12.5px] text-sand"><WasPrice price={o.price} className="mr-1.5" />{formatPrice(o.price)}</span>
                 </li>
               ))}
               <li><Link to="/coachings" className="link-line text-[13px] font-medium text-white-warm">Tous les coachings</Link></li>

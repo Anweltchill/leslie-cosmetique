@@ -57,6 +57,14 @@ export const site = {
     active: false,
     discount: '−20 %',
   },
+  // PROMOTION (prix barrés sur toutes les offres + bandeau défilant en haut du site).
+  // Prix payé = prix de l'offre (inchangé). Prix barré = prix ÷ (1 − remise), arrondi à l'euro.
+  // Pour tout retirer : passer `active` à false.
+  promo: {
+    active: true,
+    percent: 30,
+    banner: 'Offre Black Friday — −30 % sur toutes les offres et tous les services',
+  },
   // Pop-up d'information sur la formation en direct — désactivé (formation retirée du site).
   urgency: {
     active: false,

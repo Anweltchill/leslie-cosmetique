@@ -2,6 +2,7 @@ import { useSeo } from '@/lib/seo';
 import { coachings, offerPath, formatPrice, bookingHref } from '@/data/offers';
 import { track } from '@/lib/track';
 import { AuditHint } from '@/components/AuditPromo';
+import { WasPrice, PromoBadge } from '@/components/Promo';
 import { Link } from '@/lib/router';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 import { CalendarDays, Clock3, Video, MousePointerClick } from 'lucide-react';
@@ -61,7 +62,11 @@ export function CoachingsPage() {
                 <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
                   <h2 className="font-serif-lc text-[22px] leading-tight text-espresso">{o.name}</h2>
                   <p className="mt-1.5 flex-1 text-[13.5px] leading-snug text-brown">{o.tagline}</p>
-                  <p className="mt-4 font-serif-lc text-[26px] font-medium leading-none text-espresso">{formatPrice(o.price)}</p>
+                  <p className="mt-4 flex items-center gap-2 font-serif-lc text-[26px] font-medium leading-none text-espresso">
+                    {formatPrice(o.price)}
+                    <WasPrice price={o.price} className="font-sans text-[14px] font-normal text-brown" />
+                    <PromoBadge />
+                  </p>
                   <div className="mt-4 grid grid-cols-2 gap-2">
                     {bookingHref(o).startsWith('/') ? (
                       <Link

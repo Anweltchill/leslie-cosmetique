@@ -12,6 +12,7 @@ import { OfferCard } from '@/components/OfferCard';
 import { FaqAccordion } from '@/components/FaqAccordion';
 import { ModulesAccordion } from '@/components/ModulesAccordion';
 import { CountdownLine, CountdownPanel } from '@/components/Countdown';
+import { LoopVideo } from '@/components/LoopVideo';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 
 const btnCls =
@@ -248,6 +249,29 @@ export function OfferPage({ slug }: { slug: string }) {
                 </div>
               </Reveal>
             </div>
+
+            {offer.gallery && (
+              <Reveal delay={0.05}>
+                <div className="mt-10">
+                  <h2 className="font-serif-lc text-[24px] text-espresso">En images</h2>
+                  <div className="-mx-5 mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
+                    {offer.gallery.map((g) => (
+                      <figure
+                        key={g.src}
+                        className="h-[300px] shrink-0 snap-start overflow-hidden rounded-[18px] shadow-[0_24px_50px_-32px_rgba(58,42,34,0.6)] sm:h-[380px] lg:h-[420px]"
+                        style={{ aspectRatio: g.ratio }}
+                      >
+                        {g.src.endsWith('.mp4') ? (
+                          <LoopVideo src={g.src} poster={g.poster ?? ''} className="h-full w-full object-cover" />
+                        ) : (
+                          <img src={g.src} alt={g.alt} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                        )}
+                      </figure>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            )}
 
             {offer.modules && (
               <Reveal delay={0.05}>

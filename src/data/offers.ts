@@ -47,6 +47,8 @@ export interface Offer {
   practical?: { label: string; value: string }[];
   /** Programme en modules (accordéon). */
   modules?: { title: string; text: string }[];
+  /** Galerie « En images » de la page détail (vidéos .mp4 ou images), affichées à la même hauteur. */
+  gallery?: { src: string; poster?: string; alt: string; ratio: string }[];
   /** Encadré « Informations complémentaires » en bas de page. */
   notes?: { title: string; paragraphs: string[] };
   /** Compte à rebours des inscriptions. */
@@ -221,8 +223,14 @@ const allOffers: Offer[] = [
     ],
     cta: 'Obtenir le guide',
     link: site.links.payGuideRecettes,
+    // Visuels de Leslie (Drive, 22/11 à 21 h 16) : IMG-20261122-WA0013 en image d'offre (recadrée en 4:3),
+    // VID-20261122-WA0014 et IMG-20261122-WA0015 dans la galerie.
     image: '/offre-2-guide-recettes.webp',
-    imageAlt: 'Femme noire aux cheveux crépus naturels appliquant un soin capillaire devant un miroir, lumière dorée',
+    imageAlt: 'Avant et après : repousse des cheveux au niveau des tempes',
+    gallery: [
+      { src: '/videos/offre-2-guide-recettes-galerie-1.mp4', poster: '/videos/offre-2-guide-recettes-galerie-1.webp', alt: 'Vidéo : la ligne des cheveux, en deux temps', ratio: '9 / 16' },
+      { src: '/offre-2-guide-recettes-galerie-2.webp', alt: 'Avant et après : repousse des cheveux sur les tempes', ratio: '1 / 1' },
+    ],
     faq: [
       { q: 'Sous quel format se présente le guide ?', a: 'Un guide numérique PDF, accessible après achat.' },
       { q: 'Le guide est-il accessible partout dans le monde ?', a: 'Oui, il est 100 % en ligne et accessible depuis toute la francophonie.' },

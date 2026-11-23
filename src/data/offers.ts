@@ -366,8 +366,12 @@ const allOffers: Offer[] = [
     cta: 'Réserver ma consultation',
     link: site.links.resaLancementMarque,
     booking: 'calendar',
+    // Visuels de Leslie (Drive, 23/11 à 9 h 03) : IMG-20261123-WA0014 en image d'offre, WA0013 dans la colonne des visuels.
     image: '/offre-5-lancement-marque.webp',
-    imageAlt: 'Entrepreneuse noire élégante présentant une gamme de flacons ambrés et pots minimalistes dans un atelier lumineux',
+    imageAlt: "Ordinateur affiché « Lancement de marque cosmétique », carnet de projet de marque et premiers produits sur un bureau en bois",
+    gallery: [
+      { src: '/offre-5-lancement-marque-galerie-1.webp', alt: 'Gamme de soins capillaires étiquetés : après-shampoing, shampoing, lait, brume, sérum et baume', ratio: '3 / 2' },
+    ],
     faq: [
       { q: 'Comment se déroule la consultation ?', a: 'En visio, pendant 1 heure, à un créneau qui vous convient.' },
       { q: "Je n'ai encore rien démarré, est-ce pour moi ?", a: 'Oui : la consultation sert justement à poser les bases et à ordonner les étapes.' },

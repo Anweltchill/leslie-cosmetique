@@ -15,6 +15,7 @@ import { FaqAccordion } from '@/components/FaqAccordion';
 import { ModulesAccordion } from '@/components/ModulesAccordion';
 import { CountdownLine, CountdownPanel } from '@/components/Countdown';
 import { LoopVideo } from '@/components/LoopVideo';
+import { Testimonials } from '@/components/home/Testimonials';
 import { WasPrice, PromoBadge } from '@/components/Promo';
 import { Reveal, MaskLines, MaskLine } from '@/components/Reveal';
 
@@ -401,6 +402,7 @@ export function OfferPage({ slug }: { slug: string }) {
           checkout={{ offer_slug: offer.slug, cancel_path: offerPath(offer) }}
         />
       )}
+      <Testimonials />
       <section className="scroll-mt-24 border-t border-sand/60 bg-cream pb-16 pt-16 md:pt-20 lg:pb-20" aria-label="Autres offres">
         <div className="mx-auto max-w-[1120px] px-5 md:px-8">
           <div className="flex flex-wrap items-end justify-between gap-4">

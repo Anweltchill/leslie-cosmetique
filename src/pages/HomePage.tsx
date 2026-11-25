@@ -5,6 +5,7 @@ import { Doors } from '@/components/home/Doors';
 import { Creations } from '@/components/home/Creations';
 import { TextureGallery } from '@/components/home/TextureGallery';
 import { HowItWorks } from '@/components/home/HowItWorks';
+import { Testimonials } from '@/components/home/Testimonials';
 import { VisionBand } from '@/components/home/VisionBand';
 import { AboutTeaser } from '@/components/home/AboutTeaser';
 import { ForWho } from '@/components/home/ForWho';
@@ -30,6 +31,7 @@ export function HomePage({ started }: { started: boolean }) {
       <Creations />
       <VisionBand />
       <HowItWorks />
+      <Testimonials />
       <TextureGallery />
       <ForWho />
       <AboutTeaser />

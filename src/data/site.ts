@@ -46,8 +46,9 @@ export const site = {
   email: 'contact@leslie-cosmetique.com',
   // {{LIENS}} réseaux sociaux
   social: {
-    tiktok: 'https://www.tiktok.com/@lesliecosmetique',
-    instagram: 'https://www.instagram.com/lesliecosmetique',
+    tiktok: 'https://www.tiktok.com/@leslivoirienne',
+    // Lien temporaire vers un reel de Leslie, en attendant le nom exact du compte Instagram
+    instagram: 'https://www.instagram.com/reel/DgGDzfdxBPe/',
   },
   // Calendrier de réservation des coachings (heures en UTC, affichées dans l'heure locale du visiteur)
   booking: {

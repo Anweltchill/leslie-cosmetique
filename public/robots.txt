@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /merci
 Sitemap: https://leslie.phoenixpro.fr/sitemap.xml

@@ -54,7 +54,7 @@ export function Payments() {
         </button>
       </div>
       <p className="rounded-[14px] border border-sand/70 bg-cream px-4 py-3 text-[13px] text-brown">
-        Les paiements par carte (Stripe) s’ajouteront ici automatiquement dès que Stripe sera connecté. En attendant, vous pouvez saisir à la main un paiement reçu (virement, espèces…).
+        Les paiements par carte (Stripe) s’ajoutent ici automatiquement, avec le nom et l’e-mail de la cliente. Vous pouvez aussi saisir à la main un paiement reçu autrement (virement, espèces…).
       </p>
       {adding && <AddPayment onDone={() => { setAdding(false); void load(); }} />}
 

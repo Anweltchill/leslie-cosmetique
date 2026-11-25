@@ -17,6 +17,7 @@ import { OfferPage } from '@/pages/OfferPage';
 import { AboutPage } from '@/pages/AboutPage';
 import { ContactPage } from '@/pages/ContactPage';
 import { BookingPage } from '@/pages/BookingPage';
+import { MerciPage } from '@/pages/MerciPage';
 import { MentionsLegalesPage, CgvPage, ConfidentialitePage } from '@/pages/LegalPages';
 
 function ScrollManager() {
@@ -73,6 +74,7 @@ function Routes({ introDone }: { introDone: boolean }) {
     if (path === '/contact') return <ContactPage />;
     if (path === '/reserver') return <BookingPage />;
     if (path.startsWith('/reserver/')) return <BookingPage slug={path.replace('/reserver/', '')} />;
+    if (path === '/merci') return <MerciPage />;
     if (path === '/mentions-legales') return <MentionsLegalesPage />;
     if (path === '/cgv') return <CgvPage />;
     if (path === '/confidentialite') return <ConfidentialitePage />;

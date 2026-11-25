@@ -1,10 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { ArrowLeft, ArrowRight, CalendarCheck2, Check, Clock3, Loader2, Video } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarCheck2, Check, Clock3, CreditCard, Loader2, Video } from 'lucide-react';
 import { coachings, formatPrice, getVisibleOffer, offerPath, usesCalendar, bookingHref, type Offer } from '@/data/offers';
 import { useSeo } from '@/lib/seo';
 import { Link, useRouter } from '@/lib/router';
 import { track } from '@/lib/track';
 import { createBooking, fetchTakenSlots } from '@/lib/booking';
+import { paysOnline, startCheckout } from '@/lib/checkout';
 import { WasPrice } from '@/components/Promo';
 import { BookingCalendar, timeFmt } from '@/components/booking/BookingCalendar';
 
@@ -33,6 +34,35 @@ export function BookingPage({ slug }: { slug?: string }) {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [done, setDone] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState(false);
+
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setPaying(false);
+    };
+    window.addEventListener('pageshow', onShow);
+    return () => window.removeEventListener('pageshow', onShow);
+  }, []);
+
+  const pay = async () => {
+    if (!offer || !slot) return;
+    track('booking_pay_click', { offer: offer.slug });
+    setPayError(false);
+    setPaying(true);
+    try {
+      await startCheckout({
+        offer_slug: offer.slug,
+        email: form.email.trim(),
+        name: form.fullName.trim(),
+        booking_starts_at: slot.toISOString(),
+        cancel_path: '/reserver',
+      });
+    } catch {
+      setPaying(false);
+      setPayError(true);
+    }
+  };
 
   // Coaching réservé hors calendrier (audit) : redirection vers son lien ou sa page.
   useEffect(() => {
@@ -160,24 +190,44 @@ export function BookingPage({ slug }: { slug?: string }) {
                   <Check size={26} strokeWidth={2} aria-hidden />
                 </span>
                 <h2 className="mt-5 font-serif-lc text-[28px] text-espresso">Demande envoyée</h2>
-                <p className="mx-auto mt-2 max-w-[440px] text-[14.5px] leading-relaxed text-brown">
+                <p className="mx-auto mt-2 max-w-[460px] text-[14.5px] leading-relaxed text-brown">
                   Votre créneau du <strong className="font-medium text-espresso">{longFmt.format(slot)} à {timeFmt.format(slot)}</strong> est bloqué.
+                  {paysOnline(offer.slug) ? ' Réglez votre séance en ligne pour finaliser votre réservation. ' : ' '}
                   Leslie vous confirme le rendez-vous par e-mail à {form.email} avec le lien visio.
                 </p>
                 <div className="mt-7 flex flex-wrap justify-center gap-3">
-                  <a
-                    href={offer.link}
-                    target={offer.link.startsWith('http') ? '_blank' : undefined}
-                    rel={offer.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    onClick={() => track('booking_pay_click', { offer: offer.slug })}
-                    className="inline-flex items-center gap-2 rounded-full bg-espresso px-6 py-3 text-[14px] font-medium text-white-warm transition-colors hover:bg-brown"
-                  >
-                    Régler ma séance ({formatPrice(offer.price)})
-                  </a>
+                  {paysOnline(offer.slug) ? (
+                    <button
+                      type="button"
+                      onClick={pay}
+                      disabled={paying}
+                      className="inline-flex items-center gap-2 rounded-full bg-espresso px-6 py-3 text-[14px] font-medium text-white-warm transition-colors hover:bg-brown disabled:cursor-wait disabled:opacity-75"
+                    >
+                      {paying ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <CreditCard size={16} strokeWidth={1.8} aria-hidden />}
+                      {paying ? 'Redirection vers le paiement…' : `Régler ma séance (${formatPrice(offer.price)})`}
+                    </button>
+                  ) : (
+                    <a
+                      href={offer.link}
+                      target={offer.link.startsWith('http') ? '_blank' : undefined}
+                      rel={offer.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      onClick={() => track('booking_pay_click', { offer: offer.slug })}
+                      className="inline-flex items-center gap-2 rounded-full bg-espresso px-6 py-3 text-[14px] font-medium text-white-warm transition-colors hover:bg-brown"
+                    >
+                      Régler ma séance ({formatPrice(offer.price)})
+                    </a>
+                  )}
                   <Link to="/" className="inline-flex items-center rounded-full border border-sand px-6 py-3 text-[14px] font-medium text-espresso transition-colors hover:bg-nude">
                     Retour à l’accueil
                   </Link>
                 </div>
+                {paysOnline(offer.slug) && (
+                  <p className={`mt-4 text-[12.5px] ${payError ? 'text-[#9b3b2a]' : 'text-brown'}`} role={payError ? 'alert' : undefined}>
+                    {payError
+                      ? 'Le paiement n’a pas pu démarrer. Vérifiez votre connexion puis réessayez.'
+                      : 'Paiement sécurisé par carte bancaire (Stripe).'}
+                  </p>
+                )}
               </div>
             ) : step === 0 ? (
               <>

@@ -71,7 +71,7 @@ export const site = {
   },
   // FAQ — réponses à compléter par Leslie {{À COMPLÉTER}}
   faq: {
-    paiement: 'Réponse à compléter — moyens de paiement acceptés.',
+    paiement: 'Par carte bancaire, via le paiement sécurisé Stripe. Pour les guides, le téléchargement est disponible dès le paiement validé.',
     prerequis: 'Réponse à compléter — prérequis éventuels.',
     acces: "Réponse à compléter — durée d'accès aux formations.",
   },

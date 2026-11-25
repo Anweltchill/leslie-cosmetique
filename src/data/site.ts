@@ -32,6 +32,11 @@ export const site = {
     // {{LIEN_RESA_COACHING_CAPILLAIRE}}
     resaCoachingCapillaire: '#lien-resa-coaching-capillaire',
   },
+  // PAIEMENT MOBILE MONEY : le bouton « Payer par … sur WhatsApp » ouvre une conversation avec ce numéro.
+  // {{NUMERO_WHATSAPP}} — format international, chiffres uniquement (ex. 2250700000000). Vide = section Mobile Money masquée.
+  whatsapp: '',
+  // Opérateurs proposés dans la fenêtre de paiement
+  mobileMoney: ['Orange Money', 'MTN MoMo', 'Wave', 'Moov Money', 'Airtel Money', 'M-Pesa', 'Free Money', 'Autre opérateur'],
   name: 'Leslie Cosmétique',
   founder: 'Leslie Djoman',
   monogram: 'LC',

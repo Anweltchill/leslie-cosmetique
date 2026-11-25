@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BellRing, CalendarDays, Check, Clock3, Euro, Hourglass, Loader2, MonitorPlay, PackageCheck, ShoppingBag, Sparkles } from 'lucide-react';
+import { BellRing, CalendarDays, Check, Clock3, Euro, Hourglass, MonitorPlay, PackageCheck, ShoppingBag, Sparkles } from 'lucide-react';
 import { getOffer, getVisibleOffer, offerPath, familyPath, formatPrice, usesCalendar, type Block, type ListItem, type Offer } from '@/data/offers';
 import { site } from '@/data/site';
 import { useSeo, useJsonLd } from '@/lib/seo';
@@ -7,7 +7,8 @@ import { offerJsonLd } from '@/lib/offerSchema';
 import { useEnrollment } from '@/lib/enrollment';
 import { Link, useRouter } from '@/lib/router';
 import { track } from '@/lib/track';
-import { paysOnline, startCheckout } from '@/lib/checkout';
+import { mobileMoneyEnabled, paysOnline } from '@/lib/checkout';
+import { PaymentChoice } from '@/components/PaymentChoice';
 import { MagneticButton } from '@/components/MagneticButton';
 import { OfferCard } from '@/components/OfferCard';
 import { FaqAccordion } from '@/components/FaqAccordion';
@@ -88,22 +89,7 @@ export function OfferPage({ slug }: { slug: string }) {
   const { navigate } = useRouter();
   const enrollment = useEnrollment(offer?.enrollment);
   const closed = Boolean(enrollment && !enrollment.open);
-  const [paying, setPaying] = useState<string | null>(null);
-  const [payError, setPayError] = useState(false);
-
-  // Retour arrière depuis la page Stripe (page restaurée du cache) : on réactive le bouton.
-  useEffect(() => {
-    const onShow = (e: PageTransitionEvent) => {
-      if (e.persisted) setPaying(null);
-    };
-    window.addEventListener('pageshow', onShow);
-    return () => window.removeEventListener('pageshow', onShow);
-  }, []);
-  useEffect(() => {
-    if (!payError) return;
-    const t = window.setTimeout(() => setPayError(false), 7000);
-    return () => window.clearTimeout(t);
-  }, [payError]);
+  const [choiceOpen, setChoiceOpen] = useState(false);
 
   // Offre inconnue ou masquée : redirection vers la page de sa famille.
   useEffect(() => {
@@ -165,21 +151,14 @@ export function OfferPage({ slug }: { slug: string }) {
       );
     }
     if (paysOnline(offer.slug) && !isLive && !isPreorder) {
-      const buy = async () => {
+      const buy = () => {
         track('buy_click', { offer: offer.slug, price: offer.price, where });
-        setPayError(false);
-        setPaying(where);
-        try {
-          await startCheckout({ offer_slug: offer.slug, cancel_path: offerPath(offer) });
-        } catch {
-          setPaying(null);
-          setPayError(true);
-        }
+        setChoiceOpen(true);
       };
       return (
-        <button type="button" onClick={buy} disabled={paying !== null} className={`${cls} disabled:cursor-wait disabled:opacity-75`} data-track={`offer_buy_${where}_${offer.slug}`}>
-          {paying === where ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <ShoppingBag size={16} strokeWidth={1.8} aria-hidden />}
-          {paying === where ? 'Redirection vers le paiement…' : offer.cta}
+        <button type="button" onClick={buy} className={cls} data-track={`offer_buy_${where}_${offer.slug}`} aria-haspopup="dialog">
+          <ShoppingBag size={16} strokeWidth={1.8} aria-hidden />
+          {offer.cta}
         </button>
       );
     }
@@ -206,7 +185,7 @@ export function OfferPage({ slug }: { slug: string }) {
       : isCoaching
         ? 'Réservation via un lien externe.'
         : paysOnline(offer.slug)
-          ? 'Paiement sécurisé par carte bancaire (Stripe). Guide téléchargeable dès le paiement validé.'
+          ? `Paiement par carte bancaire (Stripe)${mobileMoneyEnabled() ? ' ou Mobile Money' : ''}. Guide téléchargeable dès le paiement validé.`
           : 'Paiement sécurisé via un lien externe.';
 
   return (
@@ -413,10 +392,14 @@ export function OfferPage({ slug }: { slug: string }) {
           {action('mobile_bar', 'inline-flex items-center justify-center gap-2 rounded-full bg-espresso px-5 py-3 text-center text-[13.5px] font-medium leading-tight text-white-warm transition-colors hover:bg-brown')}
         </div>
       </div>
-      {payError && (
-        <div role="alert" className="fixed inset-x-4 bottom-24 z-50 mx-auto max-w-[420px] rounded-[16px] bg-espresso px-5 py-3.5 text-center text-[13.5px] leading-snug text-white-warm shadow-[0_20px_40px_-20px_rgba(58,42,34,0.7)] lg:bottom-8">
-          Le paiement n’a pas pu démarrer. Vérifiez votre connexion puis réessayez dans un instant.
-        </div>
+      {paysOnline(offer.slug) && !isCoaching && (
+        <PaymentChoice
+          open={choiceOpen}
+          onClose={() => setChoiceOpen(false)}
+          offerName={offer.name}
+          price={offer.price}
+          checkout={{ offer_slug: offer.slug, cancel_path: offerPath(offer) }}
+        />
       )}
       <section className="scroll-mt-24 border-t border-sand/60 bg-cream pb-16 pt-16 md:pt-20 lg:pb-20" aria-label="Autres offres">
         <div className="mx-auto max-w-[1120px] px-5 md:px-8">

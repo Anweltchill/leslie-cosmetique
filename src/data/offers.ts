@@ -197,7 +197,8 @@ const allOffers: Offer[] = [
     visible: true,
     name: 'Le guide de mes 10 meilleures recettes capillaires',
     shortName: 'Guide de 10 recettes capillaires',
-    price: 38,
+    // PRIX TEMPORAIRE DE TEST (1 €) — à repasser à 55 € (et dans supabase/functions/_shared/lc.ts)
+    price: 1,
     channel: 'Guide numérique PDF',
     format: 'Guide numérique PDF, accessible après achat',
     tagline: 'Pour répondre à vos problématiques de cheveux',

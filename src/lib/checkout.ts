@@ -2,6 +2,11 @@
  * Paiement en ligne (Stripe Checkout) via la fonction serveur `lc-checkout`.
  * Les prix sont fixés côté serveur : le navigateur n'envoie que l'offre choisie.
  */
+import { site } from '@/data/site';
+
+/** Section Mobile Money (redirection WhatsApp) affichée seulement si le numéro est renseigné. */
+export const mobileMoneyEnabled = () => site.whatsapp.replace(/\D/g, '').length >= 8;
+
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/lc-checkout`;
 const ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 const LAST_KEY = 'lc-last-checkout';

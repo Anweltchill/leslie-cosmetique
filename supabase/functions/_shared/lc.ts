@@ -7,7 +7,7 @@ export type Kind = 'guide' | 'coaching';
 export const CATALOG: Record<string, { name: string; amount: number; kind: Kind; file?: string; fileName?: string }> = {
   'guide-recettes-capillaires': {
     name: 'Le guide de mes 10 meilleures recettes capillaires',
-    amount: 3800,
+    amount: 100, // PRIX TEMPORAIRE DE TEST (1 €) — à repasser à 5500 (55 €)
     kind: 'guide',
     file: 'guide-recettes-capillaires.pdf',
     fileName: 'Guide-10-recettes-capillaires-Leslie-Cosmetique.pdf',

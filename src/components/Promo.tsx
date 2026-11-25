@@ -4,7 +4,7 @@ import { compareAtPrice, promoActive, promoPercent } from '@/lib/promo';
 
 /** Prix barré, à placer à côté du prix payé. N'affiche rien si la promotion est désactivée. */
 export function WasPrice({ price, className = '' }: { price: number; className?: string }) {
-  if (!promoActive) return null;
+  if (!promoActive || compareAtPrice(price) <= price) return null;
   return (
     <s className={`whitespace-nowrap decoration-[1.5px] opacity-60 ${className}`}>
       <span className="sr-only">Au lieu de </span>

@@ -5,7 +5,8 @@ import { useSeo } from '@/lib/seo';
 import { Link, useRouter } from '@/lib/router';
 import { track } from '@/lib/track';
 import { createBooking, fetchTakenSlots } from '@/lib/booking';
-import { paysOnline, startCheckout } from '@/lib/checkout';
+import { mobileMoneyEnabled, paysOnline } from '@/lib/checkout';
+import { PaymentChoice } from '@/components/PaymentChoice';
 import { WasPrice } from '@/components/Promo';
 import { BookingCalendar, timeFmt } from '@/components/booking/BookingCalendar';
 
@@ -34,34 +35,12 @@ export function BookingPage({ slug }: { slug?: string }) {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState('');
   const [done, setDone] = useState(false);
-  const [paying, setPaying] = useState(false);
-  const [payError, setPayError] = useState(false);
+  const [choiceOpen, setChoiceOpen] = useState(false);
 
-  useEffect(() => {
-    const onShow = (e: PageTransitionEvent) => {
-      if (e.persisted) setPaying(false);
-    };
-    window.addEventListener('pageshow', onShow);
-    return () => window.removeEventListener('pageshow', onShow);
-  }, []);
-
-  const pay = async () => {
+  const pay = () => {
     if (!offer || !slot) return;
     track('booking_pay_click', { offer: offer.slug });
-    setPayError(false);
-    setPaying(true);
-    try {
-      await startCheckout({
-        offer_slug: offer.slug,
-        email: form.email.trim(),
-        name: form.fullName.trim(),
-        booking_starts_at: slot.toISOString(),
-        cancel_path: '/reserver',
-      });
-    } catch {
-      setPaying(false);
-      setPayError(true);
-    }
+    setChoiceOpen(true);
   };
 
   // Coaching réservé hors calendrier (audit) : redirection vers son lien ou sa page.
@@ -200,11 +179,11 @@ export function BookingPage({ slug }: { slug?: string }) {
                     <button
                       type="button"
                       onClick={pay}
-                      disabled={paying}
-                      className="inline-flex items-center gap-2 rounded-full bg-espresso px-6 py-3 text-[14px] font-medium text-white-warm transition-colors hover:bg-brown disabled:cursor-wait disabled:opacity-75"
+                      aria-haspopup="dialog"
+                      className="inline-flex items-center gap-2 rounded-full bg-espresso px-6 py-3 text-[14px] font-medium text-white-warm transition-colors hover:bg-brown"
                     >
-                      {paying ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <CreditCard size={16} strokeWidth={1.8} aria-hidden />}
-                      {paying ? 'Redirection vers le paiement…' : `Régler ma séance (${formatPrice(offer.price)})`}
+                      <CreditCard size={16} strokeWidth={1.8} aria-hidden />
+                      Régler ma séance ({formatPrice(offer.price)})
                     </button>
                   ) : (
                     <a
@@ -222,11 +201,25 @@ export function BookingPage({ slug }: { slug?: string }) {
                   </Link>
                 </div>
                 {paysOnline(offer.slug) && (
-                  <p className={`mt-4 text-[12.5px] ${payError ? 'text-[#9b3b2a]' : 'text-brown'}`} role={payError ? 'alert' : undefined}>
-                    {payError
-                      ? 'Le paiement n’a pas pu démarrer. Vérifiez votre connexion puis réessayez.'
-                      : 'Paiement sécurisé par carte bancaire (Stripe).'}
-                  </p>
+                  <>
+                    <p className="mt-4 text-[12.5px] text-brown">
+                      Paiement par carte bancaire (Stripe){mobileMoneyEnabled() ? ' ou Mobile Money (Orange Money, MTN, Wave…)' : ''}.
+                    </p>
+                    <PaymentChoice
+                      open={choiceOpen}
+                      onClose={() => setChoiceOpen(false)}
+                      offerName={offer.name}
+                      price={offer.price}
+                      detail={`Rendez-vous réservé : ${longFmt.format(slot)} à ${timeFmt.format(slot)}, au nom de ${form.fullName.trim()}.`}
+                      checkout={{
+                        offer_slug: offer.slug,
+                        email: form.email.trim(),
+                        name: form.fullName.trim(),
+                        booking_starts_at: slot.toISOString(),
+                        cancel_path: '/reserver',
+                      }}
+                    />
+                  </>
                 )}
               </div>
             ) : step === 0 ? (

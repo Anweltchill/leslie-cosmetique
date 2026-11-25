@@ -4,7 +4,7 @@ import { coachings, formatPrice, getVisibleOffer, offerPath, usesCalendar, booki
 import { useSeo } from '@/lib/seo';
 import { Link, useRouter } from '@/lib/router';
 import { track } from '@/lib/track';
-import { createBooking, fetchTakenSlots } from '@/lib/booking';
+import { createBooking, fallbackSlots, fetchAvailableSlots } from '@/lib/booking';
 import { mobileMoneyEnabled, paysOnline } from '@/lib/checkout';
 import { PaymentChoice } from '@/components/PaymentChoice';
 import { WasPrice } from '@/components/Promo';
@@ -28,7 +28,8 @@ export function BookingPage({ slug }: { slug?: string }) {
   });
   const [day, setDay] = useState<Date | null>(null);
   const [slot, setSlot] = useState<Date | null>(null);
-  const [taken, setTaken] = useState<Set<number>>(new Set());
+  const [available, setAvailable] = useState<Date[]>([]);
+  const [reload, setReload] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [form, setForm] = useState({ fullName: '', email: '', phone: '', message: '' });
@@ -56,20 +57,36 @@ export function BookingPage({ slug }: { slug?: string }) {
     path: '/reserver',
   });
 
+  // Créneaux libres de la séance choisie, sur les 3 prochains mois (disponibilités saisies dans l'admin).
+  const offerSlug = offer?.slug;
   useEffect(() => {
+    if (!offerSlug) return;
     let cancelled = false;
     setLoading(true);
     setLoadError(false);
-    const from = new Date(month.getFullYear(), month.getMonth(), 1);
-    const to = new Date(month.getFullYear(), month.getMonth() + 1, 2);
-    fetchTakenSlots(from, to)
-      .then((s) => { if (!cancelled) setTaken(s); })
+    const from = new Date();
+    const to = new Date(from.getTime() + 92 * 86400000);
+    fetchAvailableSlots(offerSlug, from, to)
+      .then((s) => s ?? fallbackSlots(from, to))
+      .then((s) => {
+        if (cancelled) return;
+        setAvailable(s);
+        // Ouvre directement le mois du premier créneau libre (ex. date de lancement).
+        if (s.length) {
+          const first = s[0];
+          setMonth((m) => (s.some((x) => x.getFullYear() === m.getFullYear() && x.getMonth() === m.getMonth()) ? m : new Date(first.getFullYear(), first.getMonth(), 1)));
+        }
+      })
       .catch(() => { if (!cancelled) setLoadError(true); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [month]);
+  }, [offerSlug, reload]);
 
   const chooseOffer = (o: Offer) => {
+    if (o.slug !== offer?.slug) {
+      setDay(null);
+      setSlot(null);
+    }
     setOffer(o);
     setStep(1);
     track('booking_offer_select', { offer: o.slug });
@@ -88,7 +105,8 @@ export function BookingPage({ slug }: { slug?: string }) {
       return;
     }
     if (res.reason === 'taken') {
-      setTaken((t) => new Set(t).add(slot.getTime()));
+      setAvailable((a) => a.filter((x) => x.getTime() !== slot.getTime()));
+      setReload((n) => n + 1);
       setSlot(null);
       setStep(1);
       setSendError('Ce créneau vient d’être réservé. Choisissez-en un autre.');
@@ -291,7 +309,7 @@ export function BookingPage({ slug }: { slug?: string }) {
                     onDayChange={(d) => { setDay(d); setSlot(null); }}
                     slot={slot}
                     onSlotChange={setSlot}
-                    taken={taken}
+                    available={available}
                     loading={loading}
                     loadError={loadError}
                   />

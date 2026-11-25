@@ -4,6 +4,7 @@ import { Link } from '@/lib/router';
 import { rpc, type Booking, type BookingStatus } from '../api';
 import { Badge, Card, Empty } from '../ui';
 import { btnCls, btnGhostCls, fmtDateTime, fmtTime, inputCls } from '../format';
+import { Availability } from './Availability';
 
 const STATUS: Record<BookingStatus, { label: string; tone: 'gold' | 'green' | 'red' | 'grey' }> = {
   pending: { label: 'À confirmer', tone: 'gold' },
@@ -22,6 +23,42 @@ const monthFmt = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeri
 const dayKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
 export function Agenda({ onChange }: { onChange?: () => void }) {
+  const [view, setView] = useState<'rdv' | 'dispo'>(() => (window.location.hash === '#disponibilites' ? 'dispo' : 'rdv'));
+  const switchView = (v: 'rdv' | 'dispo') => {
+    setView(v);
+    window.history.replaceState(null, '', v === 'dispo' ? '#disponibilites' : window.location.pathname);
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-serif-lc text-[30px] leading-tight text-espresso">Agenda</h1>
+        <Link to="/admin/parametres" className={btnGhostCls}>
+          <CalendarPlus size={15} aria-hidden /> Ajouter à Google Agenda / iPhone
+        </Link>
+      </div>
+      <div className="flex gap-1.5" role="tablist" aria-label="Agenda">
+        {([['rdv', 'Rendez-vous'], ['dispo', 'Mes disponibilités']] as const).map(([v, label]) => (
+          <button
+            key={v}
+            type="button"
+            role="tab"
+            aria-selected={view === v}
+            onClick={() => switchView(v)}
+            className={`rounded-full px-4 py-2 text-[13px] font-medium transition-colors ${
+              view === v ? 'bg-espresso text-white-warm' : 'border border-sand text-espresso hover:bg-nude'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {view === 'dispo' ? <Availability /> : <Bookings onChange={onChange} />}
+    </div>
+  );
+}
+
+function Bookings({ onChange }: { onChange?: () => void }) {
   const [month, setMonth] = useState(() => {
     const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), 1);
@@ -83,12 +120,6 @@ export function Agenda({ onChange }: { onChange?: () => void }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-serif-lc text-[30px] leading-tight text-espresso">Agenda</h1>
-        <Link to="/admin/parametres" className={btnGhostCls}>
-          <CalendarPlus size={15} aria-hidden /> Ajouter à Google Agenda / iPhone
-        </Link>
-      </div>
       {error && <p className="text-[14px] text-[#9b3b2a]">{error}</p>}
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">

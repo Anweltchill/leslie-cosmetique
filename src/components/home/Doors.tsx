@@ -111,7 +111,7 @@ export function Doors() {
         </div>
         <Reveal delay={0.1} className="max-w-[360px]">
           <p className="text-[14px] leading-relaxed text-brown">
-            Apprenez seule avec une formation en ligne, ou faites-vous accompagner en visio lors d’un coaching individuel.
+            Apprenez seule avec une formation ou un guide en ligne, ou faites-vous accompagner en visio lors d’un coaching individuel.
           </p>
         </Reveal>
       </div>
@@ -120,7 +120,7 @@ export function Doors() {
         <Family
           icon={GraduationCap}
           label="Apprendre seule"
-          title="Formations"
+          title="Formations et guides"
           text="Des guides en ligne pour apprendre à formuler, à votre rythme."
           image="/videos/porte-formations.webp"
           imageAlt="Application d'une crème capillaire maison sur des cheveux crépus"
@@ -129,7 +129,7 @@ export function Doors() {
           video={{ src: '/videos/porte-formations.mp4', poster: '/videos/porte-formations.webp' }}
           items={formations}
           to="/formations"
-          cta="Voir les formations"
+          cta="Voir les formations et guides"
           delay={0}
         />
         <Family

@@ -34,8 +34,8 @@ export const site = {
   },
   // PAIEMENT MOBILE MONEY : le bouton « Payer par … sur WhatsApp » ouvre une conversation avec ce numéro.
   // {{NUMERO_WHATSAPP}} — format international, chiffres uniquement (ex. 2250700000000). Vide = section Mobile Money masquée.
-  whatsapp: '',
-  // Opérateurs proposés dans la fenêtre de paiement
+  whatsapp: '33647426307',
+  // Opérateurs affichés dans la fenêtre de paiement (à titre indicatif)
   mobileMoney: ['Orange Money', 'MTN MoMo', 'Wave', 'Moov Money', 'Airtel Money', 'M-Pesa', 'Free Money', 'Autre opérateur'],
   name: 'Leslie Cosmétique',
   founder: 'Leslie Djoman',

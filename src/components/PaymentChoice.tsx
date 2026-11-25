@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Check, CreditCard, Loader2, Lock, MessageCircle, Smartphone, X } from 'lucide-react';
+import { CreditCard, Loader2, Lock, MessageCircle, Smartphone, X } from 'lucide-react';
 import { site } from '@/data/site';
 import { formatPrice } from '@/data/offers';
 import { track } from '@/lib/track';
@@ -19,11 +19,10 @@ interface Props {
   detail?: string;
 }
 
-/** Fenêtre « Comment souhaitez-vous payer&nbsp;? » : carte bancaire (Stripe) ou Mobile Money (WhatsApp). */
+/** Fenêtre « Comment souhaitez-vous payer ? » : carte bancaire (Stripe) ou Mobile Money (WhatsApp). */
 export function PaymentChoice({ open, onClose, offerName, price, checkout, detail }: Props) {
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState(false);
-  const [operator, setOperator] = useState<string>(site.mobileMoney[0]);
   const firstBtn = useRef<HTMLButtonElement>(null);
   const mobile = mobileMoneyEnabled();
 
@@ -66,10 +65,8 @@ export function PaymentChoice({ open, onClose, offerName, price, checkout, detai
 
   const whatsappUrl = () => {
     const lines = [
-      `Bonjour Leslie, je souhaite payer par ${operator} :`,
-      `${offerName} — ${formatPrice(price)} (soit ${toFcfa(price)} FCFA).`,
+      `Salut, je suis intéressé(e) par l’offre « ${offerName} » (${formatPrice(price)}, soit ${toFcfa(price)} FCFA) et je ne peux pas payer par carte.`,
       detail ?? '',
-      'Pouvez-vous m’indiquer comment procéder ?',
     ].filter(Boolean);
     return `https://wa.me/${site.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(lines.join('\n'))}`;
   };
@@ -143,39 +140,26 @@ export function PaymentChoice({ open, onClose, offerName, price, checkout, detai
                   <p className="text-[12.5px] text-brown">Payez avec votre numéro de téléphone</p>
                 </div>
               </div>
-              <p className="mt-4 text-[12px] font-medium uppercase tracking-[0.14em] text-brown">Choisissez votre opérateur</p>
-              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3" role="radiogroup" aria-label="Opérateur Mobile Money">
-                {site.mobileMoney.map((op) => {
-                  const active = op === operator;
-                  return (
-                    <button
-                      key={op}
-                      type="button"
-                      role="radio"
-                      aria-checked={active}
-                      onClick={() => setOperator(op)}
-                      className={`flex items-center justify-between gap-1.5 rounded-[12px] border px-3 py-2.5 text-left text-[13px] font-medium transition-colors ${
-                        active ? 'border-espresso bg-espresso text-white-warm' : 'border-sand bg-cream text-espresso hover:border-caramel'
-                      }`}
-                    >
-                      {op}
-                      {active && <Check size={14} strokeWidth={2.2} aria-hidden />}
-                    </button>
-                  );
-                })}
-              </div>
+              <p className="mt-4 text-[12px] font-medium uppercase tracking-[0.14em] text-brown">Opérateurs acceptés</p>
+              <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Opérateurs Mobile Money acceptés">
+                {site.mobileMoney.map((op) => (
+                  <li key={op} className="rounded-full border border-sand bg-cream px-3 py-1.5 text-[12.5px] font-medium text-espresso">
+                    {op}
+                  </li>
+                ))}
+              </ul>
               <a
                 href={whatsappUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => track('pay_method_click', { offer: checkout.offer_slug, method: 'mobile_money', operator })}
+                onClick={() => track('pay_method_click', { offer: checkout.offer_slug, method: 'mobile_money' })}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#1f8f4e] px-5 py-3.5 text-[14.5px] font-medium text-white transition-colors hover:bg-[#187a42]"
               >
                 <MessageCircle size={17} strokeWidth={1.8} aria-hidden />
-                Payer par {operator} sur WhatsApp
+                Continuer sur WhatsApp
               </a>
               <p className="mt-2.5 text-center text-[12px] leading-snug text-brown">
-                Vous êtes redirigée vers WhatsApp : Leslie vous envoie les instructions de paiement {operator}.
+                Un message est préparé pour Leslie sur WhatsApp : elle vous explique ensuite comment payer avec votre opérateur.
               </p>
             </section>
           )}

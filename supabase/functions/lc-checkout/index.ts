@@ -21,6 +21,22 @@ Deno.serve(async (req) => {
           const v = (Deno.env.get('LC_STRIPE_WEBHOOK_SECRET') ?? '').trim();
           return v ? (v.startsWith('whsec_') ? true : 'format_inattendu') : false;
         })(),
+        // Indice sur le type de valeur collée (jamais la valeur elle-même).
+        webhook_secret_hint: (() => {
+          const v = Deno.env.get('LC_STRIPE_WEBHOOK_SECRET') ?? '';
+          const t = v.trim();
+          const kinds: [RegExp, string][] = [
+            [/^whsec_/, 'secret de signature (bon format)'],
+            [/^we_/, 'identifiant du webhook (we_…), pas le secret'],
+            [/^sk_(live|test)_/, 'clé secrète API (sk_…), pas le secret du webhook'],
+            [/^rk_/, 'clé restreinte (rk_…), pas le secret du webhook'],
+            [/^pk_/, 'clé publique (pk_…), pas le secret du webhook'],
+            [/^https?:/, 'adresse du webhook, pas le secret'],
+            [/^["'«]/, 'valeur entourée de guillemets'],
+          ];
+          const kind = kinds.find(([r]) => r.test(t))?.[1] ?? 'autre format';
+          return { type: kind, longueur: v.length, espaces_autour: v !== t };
+        })(),
       };
       if (key) {
         try {

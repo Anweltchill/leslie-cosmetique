@@ -12,7 +12,7 @@ export function FormationsPage() {
   useSeo({
     title: 'Formations',
     description:
-      'Formations de Leslie Cosmétique : guide de 10 recettes capillaires (38 €) et guide numérique de formulation cosmétique (48 €), accessibles partout et à votre rythme.',
+      'Formations de Leslie Cosmétique : guide de 10 recettes capillaires (55 €) et guide numérique de formulation cosmétique (48 €), accessibles partout et à votre rythme.',
     path: '/formations',
   });
 

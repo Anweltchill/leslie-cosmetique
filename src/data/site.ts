@@ -12,7 +12,7 @@ export const site = {
   links: {
     // {{LIEN_PAIEMENT_FORMATION_LIVE}} — Formation cosmétique capillaire (en direct), 400 € — offre retirée, lien conservé
     payFormationLive: '#lien-paiement-formation-live',
-    // {{LIEN_PAIEMENT_GUIDE_RECETTES}} — Guide de mes 10 meilleures recettes capillaires, 38 €
+    // {{LIEN_PAIEMENT_GUIDE_RECETTES}} — Guide de mes 10 meilleures recettes capillaires, 55 €
     payGuideRecettes: '#lien-paiement-guide-recettes',
     // {{LIEN_PAIEMENT_GUIDE_FORMULATION}} — Guide numérique de formulation, 48 € (ancien {{LIEN_PAIEMENT_GUIDE}})
     payGuideFormulation: '#lien-paiement-guide',
@@ -47,8 +47,7 @@ export const site = {
   // {{LIENS}} réseaux sociaux
   social: {
     tiktok: 'https://www.tiktok.com/@leslivoirienne',
-    // Lien temporaire vers un reel de Leslie, en attendant le nom exact du compte Instagram
-    instagram: 'https://www.instagram.com/reel/DgGDzfdxBPe/',
+    instagram: 'https://www.instagram.com/leslivoirienne/',
   },
   // Calendrier de réservation des coachings (heures en UTC, affichées dans l'heure locale du visiteur)
   booking: {

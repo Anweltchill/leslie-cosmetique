@@ -43,7 +43,7 @@ export const site = {
   // {{NOM_DOMAINE}} — sous-domaine provisoire (à changer si un domaine dédié est acheté, ainsi que public/sitemap.xml et public/robots.txt)
   url: 'https://leslie.phoenixpro.fr',
   // {{EMAIL_PRO}}
-  email: 'contact@leslie-cosmetique.com',
+  email: 'lesliedjomanghi@gmail.com',
   // {{LIENS}} réseaux sociaux
   social: {
     tiktok: 'https://www.tiktok.com/@leslivoirienne',
@@ -74,11 +74,11 @@ export const site = {
   urgency: {
     active: false,
   },
-  // FAQ — réponses à compléter par Leslie {{À COMPLÉTER}}
+  // FAQ (réponses communes à l'accueil et aux pages d'offres)
   faq: {
-    paiement: 'Par carte bancaire, via le paiement sécurisé Stripe. Pour les guides, le téléchargement est disponible dès le paiement validé.',
-    prerequis: 'Réponse à compléter — prérequis éventuels.',
-    acces: "Réponse à compléter — durée d'accès aux formations.",
+    paiement: 'Par carte bancaire, via le paiement sécurisé Stripe, ou par Mobile Money (Orange Money, MTN MoMo, Wave…) : dans ce cas, vous êtes guidée sur WhatsApp. Pour les guides, le téléchargement est disponible dès le paiement validé.',
+    prerequis: 'Aucun prérequis : les guides et les coachings sont pensés pour les débutantes comme pour celles qui formulent déjà. Tout est expliqué pas à pas, du matériel aux dosages. Il vous faudra simplement un petit équipement de base (balance de précision, bain-marie, mixeur…), détaillé dans chaque guide.',
+    acces: "Sans limite de durée : le guide est un fichier PDF que vous téléchargez dès le paiement validé, et il vous appartient. Le lien de téléchargement reste actif 7 jours : pensez à enregistrer le fichier sur votre téléphone ou votre ordinateur.",
   },
 } as const;
 

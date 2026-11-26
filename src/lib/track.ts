@@ -139,6 +139,14 @@ export function getAttribution(): Attribution {
 
 /** Identifiants anonymes du visiteur et de la visite (transmis au paiement pour l'attribution des ventes). */
 export function visitIds() {
+  // Identifiant visiteur renouvelé au plus tard tous les 13 mois (mesure d'audience exemptée de consentement).
+  safe(() => {
+    const ts = Number(localStorage.getItem('lc-vid-ts') || 0);
+    if (!ts || Date.now() - ts > 395 * 86400000) {
+      localStorage.removeItem('lc-vid');
+      localStorage.setItem('lc-vid-ts', String(Date.now()));
+    }
+  }, undefined);
   return { visitor_id: storedId('localStorage', 'lc-vid'), session_id: storedId('sessionStorage', 'lc-sid') };
 }
 

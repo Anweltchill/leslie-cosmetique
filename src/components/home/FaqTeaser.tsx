@@ -17,7 +17,7 @@ const items = [
     a: site.faq.prerequis,
   },
   {
-    q: "Combien de temps ai-je accès aux formations ?",
+    q: "Combien de temps ai-je accès aux guides ?",
     a: site.faq.acces,
   },
   {

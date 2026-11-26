@@ -20,26 +20,41 @@ function LegalLayout({ title, path, children }: { title: string; path: string; c
   );
 }
 
+const Mail = () => <a href={`mailto:${site.email}`} className="link-line text-brown">{site.email}</a>;
+
 export function MentionsLegalesPage() {
   return (
     <LegalLayout title="Mentions légales" path="/mentions-legales">
       <h2>Éditrice du site</h2>
       <p>
-        <strong>{site.name}</strong> — {site.founder}, entrepreneure individuelle. Formulatrice en cosmétique naturelle et formatrice.
-        Contact : <a href={`mailto:${site.email}`} className="link-line text-brown">{site.email}</a>.
+        Le site <strong>{site.url.replace('https://', '')}</strong> est édité par <strong>{site.founder}</strong>, entrepreneure individuelle,
+        sous le nom commercial <strong>{site.name}</strong> : formulation de cosmétiques naturels, guides numériques et accompagnements en ligne.
       </p>
-      <p>Adresse du siège, numéro SIRET et informations d'immatriculation : à compléter par l'éditrice.</p>
+      <p>
+        Contact : <Mail />. Les informations d’immatriculation de l’éditrice sont communiquées sur simple demande à cette adresse.
+      </p>
+      <p>Directrice de la publication : {site.founder}.</p>
       <h2>Hébergement</h2>
-      <p>Ce site est hébergé par un prestataire professionnel. Coordonnées de l'hébergeur : à compléter.</p>
+      <p>
+        Site hébergé par <strong>Netlify, Inc.</strong>, San Francisco, Californie, États-Unis (www.netlify.com).
+        Données des réservations, des questions et des commandes hébergées par <strong>Supabase, Inc.</strong> (supabase.com).
+      </p>
+      <h2>Paiements</h2>
+      <p>
+        Les paiements par carte bancaire sont traités par <strong>Stripe Payments Europe, Ltd.</strong> (Dublin, Irlande), prestataire de
+        paiement agréé. {site.name} n’a jamais accès à vos données bancaires.
+      </p>
       <h2>Propriété intellectuelle</h2>
       <p>
-        L'ensemble des contenus du site (textes, visuels, logo, monogramme LC) est la propriété exclusive de {site.name}.
-        Toute reproduction, même partielle, est interdite sans autorisation écrite préalable.
+        L’ensemble des contenus du site et des guides (textes, recettes, formules, photos, vidéos, logo et monogramme LC) est la propriété
+        exclusive de {site.name}, sauf mention contraire. Toute reproduction, diffusion ou revente, même partielle, est interdite sans
+        autorisation écrite préalable. Les guides achetés sont réservés à un usage strictement personnel.
       </p>
-      <h2>Liens externes</h2>
+      <h2>Responsabilité</h2>
       <p>
-        Les achats et réservations s'effectuent via des plateformes tierces sécurisées (paiement et agenda en ligne).
-        {site.name} ne saurait être tenue responsable du contenu ou du fonctionnement de ces services externes.
+        Les recettes et conseils sont partagés à titre informatif, pour une fabrication en petite quantité et un usage personnel. Ils ne
+        remplacent pas un avis médical. Effectuez toujours un test de tolérance cutanée avant la première utilisation. Toute mise sur le
+        marché d’un produit cosmétique nécessite des évaluations et contrôles réglementaires supplémentaires.
       </p>
     </LegalLayout>
   );
@@ -50,33 +65,53 @@ export function CgvPage() {
     <LegalLayout title="Conditions générales de vente" path="/cgv">
       <h2>Objet</h2>
       <p>
-        Les présentes conditions régissent la vente à distance des formations en ligne, guides numériques et consultations
-        individuelles (coachings en visio) proposés par {site.name}.
+        Les présentes conditions régissent la vente à distance, sur le site {site.url.replace('https://', '')}, des guides numériques et des
+        accompagnements individuels en visio (coachings, consultation, audit) proposés par {site.name}. Toute commande vaut acceptation
+        des présentes conditions.
       </p>
-      <h2>Prix et paiement</h2>
+      <h2>Prix</h2>
       <p>
-        Les prix sont indiqués en euros, toutes taxes comprises. Le paiement s'effectue via une plateforme de paiement
-        sécurisée externe, au moment de la commande. Moyens de paiement acceptés : à compléter.
+        Les prix sont indiqués en euros, toutes taxes comprises, sur la page de chaque offre. Le prix applicable est celui affiché au
+        moment de la commande. Les prix barrés correspondent au prix habituel en dehors des opérations promotionnelles.
       </p>
-      <h2>Accès aux formations et guides</h2>
+      <h2>Paiement</h2>
       <p>
-        Après confirmation du paiement, l'accès aux contenus numériques est délivré selon les modalités précisées lors de
-        l'achat. Durée d'accès : à compléter.
+        <strong>Carte bancaire</strong> (Visa, Mastercard, CB…) via la plateforme de paiement sécurisée Stripe : le paiement est débité au
+        moment de la commande.
+      </p>
+      <p>
+        <strong>Mobile Money</strong> (Orange Money, MTN MoMo, Wave, Moov Money, Airtel Money, M-Pesa, Free Money…) : la commande est
+        finalisée sur WhatsApp, où les instructions de paiement vous sont transmises. Le guide ou la séance sont délivrés après réception
+        du paiement.
+      </p>
+      <h2>Guides numériques</h2>
+      <p>
+        Les guides sont des fichiers PDF. Après confirmation du paiement par carte, un lien de téléchargement s’affiche immédiatement ; il
+        reste actif 7 jours. Le fichier téléchargé vous appartient sans limite de durée. En cas de difficulté, écrivez à <Mail /> : le guide
+        vous sera renvoyé par e-mail.
       </p>
       <h2>Coachings en visio</h2>
       <p>
-        Les coachings sont réalisés en visioconférence, sur créneau réservé via l'agenda en ligne. Toute demande de report
-        ou d'annulation doit être adressée par e-mail au plus tard 48 h avant la séance.
+        Les séances (Coaching Formulation, Consultation Lancement de Marque, Audit d’orientation) se déroulent en visioconférence, sur le
+        créneau choisi dans le calendrier du site. Le rendez-vous est confirmé par e-mail avec le lien de connexion.
+      </p>
+      <p>
+        Toute demande de report ou d’annulation doit être adressée par e-mail au plus tard 48 h avant la séance : la séance est alors
+        reportée ou remboursée. En deçà de 48 h, ou en cas d’absence, la séance reste due, sauf cas de force majeure.
       </p>
       <h2>Droit de rétractation</h2>
       <p>
-        Conformément à la réglementation applicable aux contenus numériques fournis immédiatement avec accord exprès du
-        consommateur, le droit de rétractation ne s'applique pas aux formations et guides dont l'accès est délivré
-        immédiatement. Pour les consultations, les règles de report ci-dessus s'appliquent.
+        Pour les guides numériques, fournis immédiatement après le paiement, vous demandez l’accès au contenu dès la commande et
+        reconnaissez ainsi renoncer à votre droit de rétractation, conformément à l’article L.221-28 du Code de la consommation.
       </p>
-      <h2>Contact</h2>
       <p>
-        Pour toute question relative à une commande : <a href={`mailto:${site.email}`} className="link-line text-brown">{site.email}</a>.
+        Pour les séances, vous disposez d’un délai de 14 jours après la commande pour vous rétracter, tant que la séance n’a pas eu lieu.
+        Si vous réservez une séance avant la fin de ce délai, vous demandez expressément qu’elle soit réalisée à la date choisie.
+      </p>
+      <h2>Réclamations</h2>
+      <p>
+        Pour toute question ou réclamation relative à une commande : <Mail />. En cas de litige, vous pouvez recourir gratuitement à un
+        médiateur de la consommation ou à la plateforme européenne de règlement en ligne des litiges.
       </p>
     </LegalLayout>
   );
@@ -85,26 +120,44 @@ export function CgvPage() {
 export function ConfidentialitePage() {
   return (
     <LegalLayout title="Politique de confidentialité" path="/confidentialite">
-      <h2>Respect de votre vie privée</h2>
+      <h2>Responsable du traitement</h2>
       <p>
-        {site.name} ne collecte aucune donnée personnelle via ce site : aucun formulaire obligatoire, aucune inscription,
-        aucune création de compte. La navigation est libre et ouverte.
+        {site.founder} ({site.name}) — <Mail />.
       </p>
-      <h2>Données traitées par les services tiers</h2>
+      <h2>Données collectées</h2>
       <p>
-        Lors d'un achat ou d'une réservation, vous êtes redirigée vers des plateformes tierces (paiement sécurisé, agenda
-        en ligne, visioconférence). Ces services traitent vos données selon leurs propres politiques de confidentialité,
-        que nous vous invitons à consulter.
+        <strong>Réservation d’une séance</strong> : nom, e-mail, téléphone (facultatif), message et créneau choisi, pour organiser et
+        confirmer votre rendez-vous.
       </p>
-      <h2>Mesure d'audience</h2>
       <p>
-        Des statistiques de fréquentation anonymisées pourront être mises en place pour améliorer le site. Aucune donnée
-        nominative n'est collectée à cette fin sans consentement.
+        <strong>Question envoyée via la bulle « Une question ? »</strong> : nom, e-mail et message, pour vous répondre.
+      </p>
+      <p>
+        <strong>Commande</strong> : nom, e-mail, offre achetée et montant, pour délivrer le guide ou la séance et tenir la comptabilité. Les
+        données bancaires sont traitées uniquement par Stripe et ne nous sont jamais transmises. Pour le Mobile Money, l’échange a lieu sur
+        WhatsApp.
+      </p>
+      <h2>Mesure d’audience</h2>
+      <p>
+        Pour améliorer le site, des statistiques de fréquentation anonymes sont produites : pages vues, offres consultées, étapes de commande
+        et site ou réseau d’origine (Instagram, TikTok…). Elles reposent sur un identifiant aléatoire enregistré dans votre navigateur, sans
+        cookie publicitaire ni croisement avec d’autres sites. Cet identifiant est renouvelé au plus tard tous les 13 mois. Aucune mesure
+        n’est effectuée si votre navigateur indique « Ne pas me suivre ».
+      </p>
+      <h2>Destinataires et hébergement</h2>
+      <p>
+        Les données sont réservées à {site.name}. Elles sont hébergées par Supabase (base de données), Netlify (site) et Stripe (paiements),
+        qui agissent en tant que sous-traitants. Elles ne sont jamais vendues ni cédées.
+      </p>
+      <h2>Durée de conservation</h2>
+      <p>
+        Réservations, questions et coordonnées : 3 ans à compter du dernier échange. Données de commande : durée légale de conservation
+        des pièces comptables (10 ans). Statistiques de fréquentation : 25 mois au maximum.
       </p>
       <h2>Vos droits</h2>
       <p>
-        Conformément au RGPD, vous disposez de droits d'accès, de rectification et de suppression sur les données vous
-        concernant. Pour les exercer : <a href={`mailto:${site.email}`} className="link-line text-brown">{site.email}</a>.
+        Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, d’effacement, d’opposition et de limitation sur les données
+        vous concernant. Pour les exercer : <Mail />. Vous pouvez également adresser une réclamation à la CNIL (www.cnil.fr).
       </p>
     </LegalLayout>
   );

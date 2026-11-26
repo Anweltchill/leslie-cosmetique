@@ -25,7 +25,7 @@ export const CATALOG: Record<string, { name: string; amount: number; kind: Kind;
 };
 
 export const SITE = 'https://leslie.phoenixpro.fr';
-const ORIGINS = new Set([SITE, 'https://leslie-cosmetique.netlify.app', 'http://localhost:5173', 'http://localhost:4173']);
+const ORIGINS = new Set([SITE, 'https://admin.leslie.phoenixpro.fr', 'https://leslie-cosmetique.netlify.app', 'http://localhost:5173', 'http://localhost:4173']);
 export const originOk = (o: string | null) =>
   !!o && (ORIGINS.has(o) || /^https:\/\/[a-z0-9-]+--leslie-cosmetique\.netlify\.app$/.test(o));
 

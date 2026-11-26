@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { AlertCircle, Check, Copy, Loader2, LogOut, RefreshCw, Send } from 'lucide-react';
+import { Link } from '@/lib/router';
 import { calendarFeedUrl, EMAIL_LABEL, rpc, type MailSettings } from '../api';
 import { Card } from '../ui';
 import { btnCls, btnGhostCls, inputCls } from '../format';
@@ -234,7 +235,10 @@ function MailCard() {
       <div className="mt-6 border-t border-sand/60 pt-4">
         <div className="flex items-center justify-between gap-2">
           <p className="text-[13.5px] font-medium text-espresso">Derniers envois</p>
-          <button type="button" onClick={() => void load()} className="text-[12px] font-medium text-espresso underline">Actualiser</button>
+          <span className="flex gap-3">
+            <button type="button" onClick={() => void load()} className="text-[12px] font-medium text-espresso underline">Actualiser</button>
+            <Link to="/admin/emails" className="text-[12px] font-medium text-espresso underline">Tout l’historique</Link>
+          </span>
         </div>
         {cfg.recent.length ? (
           <ul className="mt-2 divide-y divide-sand/50 text-[12.5px]">

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { CalendarDays, CreditCard, ExternalLink, LayoutDashboard, Loader2, LogIn, Menu, MessageCircleQuestion, Settings as SettingsIcon, TrendingUp, Users, X } from 'lucide-react';
+import { BookOpen, CalendarDays, CreditCard, ExternalLink, LayoutDashboard, Loader2, LogIn, Mail, Menu, MessageCircleQuestion, Settings as SettingsIcon, TrendingUp, Users, X } from 'lucide-react';
 import { Link, useRouter } from '@/lib/router';
 import { site } from '@/data/site';
 import { SESSION_EXPIRED, getToken, login, logout, rpc, type Booking, type Question } from './api';
@@ -9,6 +9,8 @@ import { Agenda } from './sections/Agenda';
 import { Contacts } from './sections/Contacts';
 import { Support } from './sections/Support';
 import { Payments } from './sections/Payments';
+import { Emails } from './sections/Emails';
+import { Guides } from './sections/Guides';
 import { Settings } from './sections/Settings';
 import { inputCls } from './format';
 
@@ -19,6 +21,8 @@ const NAV = [
   { to: '/admin/contacts', label: 'Contacts', icon: Users },
   { to: '/admin/support', label: 'Support', icon: MessageCircleQuestion, badge: 'questions' as const },
   { to: '/admin/paiements', label: 'Paiements', icon: CreditCard },
+  { to: '/admin/emails', label: 'E-mails', icon: Mail, badge: 'emails' as const },
+  { to: '/admin/guides', label: 'Guides', icon: BookOpen },
   { to: '/admin/parametres', label: 'Paramètres', icon: SettingsIcon },
 ];
 
@@ -118,7 +122,7 @@ function Login({ onLogged }: { onLogged: (me: { email: string; name: string }) =
 function Shell({ me, onLogout }: { me: { email: string; name: string }; onLogout: () => void }) {
   const { path } = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [badges, setBadges] = useState({ bookings: 0, questions: 0 });
+  const [badges, setBadges] = useState({ bookings: 0, questions: 0, emails: 0 });
 
   const refreshBadges = useCallback(async () => {
     try {
@@ -127,9 +131,16 @@ function Shell({ me, onLogout }: { me: { email: string; name: string }; onLogout
         rpc<Booking[]>('lc_admin_bookings', { p_from: now.toISOString(), p_to: new Date(now.getTime() + 365 * 86400000).toISOString() }),
         rpc<Question[]>('lc_admin_questions'),
       ]);
-      setBadges({ bookings: b.filter((x) => x.status === 'pending').length, questions: q.filter((x) => x.status === 'new').length });
+      setBadges((cur) => ({ ...cur, bookings: b.filter((x) => x.status === 'pending').length, questions: q.filter((x) => x.status === 'new').length }));
     } catch {
       /* compteurs facultatifs */
+    }
+    try {
+      // e-mails en erreur (30 derniers jours, pas encore renvoyés)
+      const failed = await rpc<number>('lc_admin_email_alerts');
+      setBadges((cur) => ({ ...cur, emails: failed }));
+    } catch {
+      /* fonction absente tant que la base n'est pas à jour */
     }
   }, []);
 
@@ -146,6 +157,8 @@ function Shell({ me, onLogout }: { me: { email: string; name: string }; onLogout
     case '/admin/contacts': section = <Contacts />; break;
     case '/admin/support': section = <Support onChange={refreshBadges} />; break;
     case '/admin/paiements': section = <Payments />; break;
+    case '/admin/emails': section = <Emails onChange={refreshBadges} />; break;
+    case '/admin/guides': section = <Guides />; break;
     case '/admin/parametres': section = <Settings email={me.email} onLogout={onLogout} />; break;
     default: section = <Overview />;
   }

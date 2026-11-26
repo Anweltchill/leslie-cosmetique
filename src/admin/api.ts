@@ -130,6 +130,59 @@ export const EMAIL_LABEL: Record<EmailKind, string> = {
   sale_new: 'Alerte nouvelle vente',
   preview: 'Aperçu',
 };
+export interface EmailRow {
+  id: string;
+  kind: EmailKind;
+  to_email: string;
+  status: EmailStatus;
+  subject: string;
+  created_at: string;
+  sent_at: string | null;
+  attempts: number;
+  error: string;
+  preview_of: EmailKind | null;
+  is_resend: boolean;
+  resent: boolean;
+  client_name: string;
+  offer_slug: string;
+  booking_starts_at: string | null;
+  booking_status: BookingStatus | null;
+  payment_cents: number | null;
+}
+export interface EmailsData {
+  counts: { all: number; sent: number; failed: number; pending: number; skipped: number };
+  items: EmailRow[];
+}
+export interface GuideFile {
+  slug: string;
+  name: string;
+  price_cents: number;
+  file: string;
+  file_name: string;
+  size: number | null;
+  updated_at: string | null;
+  view_url: string | null;
+  download_url: string | null;
+}
+
+/** Liens temporaires (1 h) vers les PDF des guides, signés par la fonction serveur lc-admin-guides. */
+export async function fetchGuides(): Promise<GuideFile[]> {
+  const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+  const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/lc-admin-guides`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: anon, Authorization: `Bearer ${anon}` },
+    body: JSON.stringify({ token: getToken() }),
+  });
+  if (res.status === 401) {
+    setToken(null);
+    window.dispatchEvent(new Event(SESSION_EXPIRED));
+    throw new Error('Session expirée, reconnectez-vous.');
+  }
+  const data = (await res.json().catch(() => ({}))) as { guides?: GuideFile[] };
+  if (!res.ok || !data.guides) throw new Error('Impossible de charger les guides. Réessayez dans un instant.');
+  return data.guides;
+}
+
 export type QuestionStatus = 'new' | 'in_progress' | 'answered' | 'archived';
 export interface Question {
   id: string;

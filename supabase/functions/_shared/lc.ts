@@ -88,6 +88,15 @@ export async function signedGuideUrl(file: string, fileName: string, expiresIn =
   return `${SB_URL}/storage/v1${signedURL}&download=${encodeURIComponent(fileName)}`;
 }
 
+/** Étape du tunnel enregistrée côté serveur (ex. ouverture de la page de paiement Stripe). */
+export async function logEvent(row: Record<string, string>) {
+  try {
+    await db('lc_events', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(row) });
+  } catch (e) {
+    console.error('logEvent', e);
+  }
+}
+
 const euros = (cents: number) => `${(cents / 100).toLocaleString('fr-FR', { minimumFractionDigits: cents % 100 ? 2 : 0 })} €`;
 
 // deno-lint-ignore no-explicit-any
@@ -145,7 +154,15 @@ export async function recordSession(session: Session, forced?: 'failed') {
       customer_name: String(session.customer_details?.name ?? '').slice(0, 200),
       customer_email: email,
       booking_id: booking?.id ?? null,
-      metadata: { mode: session.livemode ? 'live' : 'test', booking_starts_at: startsAt ?? null },
+      metadata: {
+        mode: session.livemode ? 'live' : 'test',
+        booking_starts_at: startsAt ?? null,
+        // attribution de la vente (source de la visite, lien de suivi, visiteur anonyme)
+        source: session.metadata.traffic_source ?? '',
+        campaign: session.metadata.campaign ?? '',
+        visitor_id: session.metadata.visitor_id ?? '',
+        device: session.metadata.device ?? '',
+      },
     }),
   });
 

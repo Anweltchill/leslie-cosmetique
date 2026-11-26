@@ -18,6 +18,7 @@ import { AboutPage } from '@/pages/AboutPage';
 import { ContactPage } from '@/pages/ContactPage';
 import { BookingPage } from '@/pages/BookingPage';
 import { MerciPage } from '@/pages/MerciPage';
+import { LinkPage } from '@/pages/LinkPage';
 import { MentionsLegalesPage, CgvPage, ConfidentialitePage } from '@/pages/LegalPages';
 
 function ScrollManager() {
@@ -75,6 +76,7 @@ function Routes({ introDone }: { introDone: boolean }) {
     if (path === '/reserver') return <BookingPage />;
     if (path.startsWith('/reserver/')) return <BookingPage slug={path.replace('/reserver/', '')} />;
     if (path === '/merci') return <MerciPage />;
+    if (path.startsWith('/l/')) return <LinkPage code={path.slice(3).split('/')[0]} />;
     if (path === '/mentions-legales') return <MentionsLegalesPage />;
     if (path === '/cgv') return <CgvPage />;
     if (path === '/confidentialite') return <ConfidentialitePage />;
@@ -91,9 +93,17 @@ function Routes({ introDone }: { introDone: boolean }) {
 // Espace admin chargé à part (n'alourdit pas le site public).
 const AdminApp = lazy(() => import('@/admin/AdminApp'));
 
+/** Sous-domaine réservé à l'espace admin (ex. admin.leslie.phoenixpro.fr). */
+const isAdminHost = () => /^admin[.-]/.test(window.location.hostname);
+
 function AppInner() {
-  const { path } = useRouter();
-  if (path === '/admin' || path.startsWith('/admin/')) {
+  const { path, navigate } = useRouter();
+  const adminHost = isAdminHost();
+  const adminPath = path === '/admin' || path.startsWith('/admin/');
+  useEffect(() => {
+    if (adminHost && !adminPath) navigate('/admin', { replace: true });
+  }, [adminHost, adminPath, navigate]);
+  if (adminPath || adminHost) {
     return (
       <Suspense fallback={<div className="min-h-screen bg-cream" />}>
         <AdminApp />

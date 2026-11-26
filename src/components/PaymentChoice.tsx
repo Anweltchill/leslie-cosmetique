@@ -40,6 +40,12 @@ export function PaymentChoice({ open, onClose, offerName, price, checkout, detai
     };
   }, [open, paying, onClose]);
 
+  // Étape du tunnel : fenêtre de paiement ouverte.
+  const offerSlug = checkout.offer_slug;
+  useEffect(() => {
+    if (open) track('pay_choice_open', { offer: offerSlug });
+  }, [open, offerSlug]);
+
   // Retour arrière depuis la page Stripe (page restaurée du cache) : on réactive le bouton.
   useEffect(() => {
     const onShow = (e: PageTransitionEvent) => {
@@ -52,7 +58,7 @@ export function PaymentChoice({ open, onClose, offerName, price, checkout, detai
   if (!open) return null;
 
   const payByCard = async () => {
-    track('pay_method_click', { offer: checkout.offer_slug, method: 'card' });
+    track('pay_method_card', { offer: checkout.offer_slug });
     setError(false);
     setPaying(true);
     try {
@@ -152,7 +158,7 @@ export function PaymentChoice({ open, onClose, offerName, price, checkout, detai
                 href={whatsappUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => track('pay_method_click', { offer: checkout.offer_slug, method: 'mobile_money' })}
+                onClick={() => track('pay_method_mobile', { offer: checkout.offer_slug })}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#1f8f4e] px-5 py-3.5 text-[14.5px] font-medium text-white transition-colors hover:bg-[#187a42]"
               >
                 <MessageCircle size={17} strokeWidth={1.8} aria-hidden />

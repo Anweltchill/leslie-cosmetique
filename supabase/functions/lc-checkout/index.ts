@@ -2,9 +2,10 @@
 //   POST                      { offer_slug, email?, name?, booking_starts_at?, cancel_path? } → { url }
 //   GET  ?session_id=cs_...   état du paiement (+ lien de téléchargement du guide une fois payé)
 //   GET  ?check=1             diagnostic de configuration (aucune donnée sensible)
-import { CATALOG, SITE, corsHeaders, json, originOk, recordSession, signedGuideUrl, stripe, stripeKey } from '../_shared/lc.ts';
+import { CATALOG, SITE, corsHeaders, json, logEvent, originOk, recordSession, signedGuideUrl, stripe, stripeKey } from '../_shared/lc.ts';
 
 const EMAIL = /^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,}$/;
+const token = (v: unknown, max: number) => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, max);
 
 Deno.serve(async (req) => {
   const origin = req.headers.get('Origin');
@@ -124,8 +125,32 @@ Deno.serve(async (req) => {
       p.set('metadata[booking_starts_at]', startsAt.toISOString());
       if (EMAIL.test(email)) p.set('metadata[booking_email]', email);
     }
+    // Attribution (source de la visite, lien de suivi) pour les statistiques de l'admin
+    const attr = {
+      source: token(body.source, 60) || 'direct',
+      campaign: token(body.campaign, 60),
+      visitor_id: token(body.visitor_id, 64),
+      session_id: token(body.session_id, 64),
+      device: ['mobile', 'tablet', 'desktop'].includes(String(body.device)) ? String(body.device) : '',
+    };
+    // (« source » est déjà le repère des paiements du site : l'origine de la visite va dans « traffic_source »)
+    p.set('metadata[traffic_source]', attr.source);
+    for (const k of ['campaign', 'visitor_id', 'device'] as const) if (attr[k]) p.set(`metadata[${k}]`, attr[k]);
 
     const session = await stripe('checkout/sessions', p);
+    if (attr.visitor_id.length >= 8 && attr.session_id.length >= 8) {
+      const row: Record<string, string> = {
+        event: 'checkout_start',
+        visitor_id: attr.visitor_id,
+        session_id: attr.session_id,
+        path: '/paiement',
+        offer_slug: slug,
+        utm_source: attr.source,
+        device: attr.device,
+      };
+      if (attr.campaign) row.campaign = attr.campaign;
+      await logEvent(row);
+    }
     return json({ url: session.url }, 200, cors);
   } catch (e) {
     console.error(e);

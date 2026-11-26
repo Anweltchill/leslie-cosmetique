@@ -3,6 +3,7 @@
  * Les prix sont fixés côté serveur : le navigateur n'envoie que l'offre choisie.
  */
 import { site } from '@/data/site';
+import { getAttribution, visitIds } from '@/lib/track';
 
 /** Section Mobile Money (redirection WhatsApp) affichée seulement si le numéro est renseigné. */
 export const mobileMoneyEnabled = () => site.whatsapp.replace(/\D/g, '').length >= 8;
@@ -35,7 +36,10 @@ const headers = { 'Content-Type': 'application/json', apikey: ANON, Authorizatio
 
 /** Crée la session de paiement et redirige vers la page sécurisée Stripe. */
 export async function startCheckout(input: CheckoutInput): Promise<void> {
-  const res = await fetch(FN_URL, { method: 'POST', headers, body: JSON.stringify(input) });
+  // Source de la visite et identifiants anonymes : relient la vente à Instagram, TikTok… dans l'admin.
+  const attr = getAttribution();
+  const body = { ...input, ...visitIds(), source: attr.source, campaign: attr.campaign, device: window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop' };
+  const res = await fetch(FN_URL, { method: 'POST', headers, body: JSON.stringify(body) });
   const data = (await res.json().catch(() => ({}))) as { url?: string };
   if (!res.ok || !data.url) throw new Error('checkout');
   try {

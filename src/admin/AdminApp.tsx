@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { CalendarDays, CreditCard, ExternalLink, LayoutDashboard, Loader2, LogIn, Menu, MessageCircleQuestion, Settings as SettingsIcon, Users, X } from 'lucide-react';
+import { CalendarDays, CreditCard, ExternalLink, LayoutDashboard, Loader2, LogIn, Menu, MessageCircleQuestion, Settings as SettingsIcon, TrendingUp, Users, X } from 'lucide-react';
 import { Link, useRouter } from '@/lib/router';
 import { site } from '@/data/site';
 import { SESSION_EXPIRED, getToken, login, logout, rpc, type Booking, type Question } from './api';
 import { Overview } from './sections/Overview';
+import { Acquisition } from './sections/Acquisition';
 import { Agenda } from './sections/Agenda';
 import { Contacts } from './sections/Contacts';
 import { Support } from './sections/Support';
@@ -13,6 +14,7 @@ import { inputCls } from './format';
 
 const NAV = [
   { to: '/admin', label: 'Vue d’ensemble', icon: LayoutDashboard },
+  { to: '/admin/acquisition', label: 'Acquisition', icon: TrendingUp },
   { to: '/admin/agenda', label: 'Agenda', icon: CalendarDays, badge: 'bookings' as const },
   { to: '/admin/contacts', label: 'Contacts', icon: Users },
   { to: '/admin/support', label: 'Support', icon: MessageCircleQuestion, badge: 'questions' as const },
@@ -139,6 +141,7 @@ function Shell({ me, onLogout }: { me: { email: string; name: string }; onLogout
   const current = path === '/admin' || path === '/admin/' ? '/admin' : path;
   let section;
   switch (current) {
+    case '/admin/acquisition': section = <Acquisition />; break;
     case '/admin/agenda': section = <Agenda onChange={refreshBadges} />; break;
     case '/admin/contacts': section = <Contacts />; break;
     case '/admin/support': section = <Support onChange={refreshBadges} />; break;
@@ -181,7 +184,7 @@ function Shell({ me, onLogout }: { me: { email: string; name: string }; onLogout
         </div>
         {nav}
         <div className="mt-auto space-y-2 border-t border-white-warm/10 pt-4">
-          <a href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 text-[13px] text-sand hover:text-white-warm">
+          <a href={/^admin[.-]/.test(window.location.hostname) ? site.url : '/'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 text-[13px] text-sand hover:text-white-warm">
             <ExternalLink size={14} aria-hidden /> Voir le site
           </a>
           <p className="truncate px-3 text-[12px] text-sand/70">{me.email}</p>

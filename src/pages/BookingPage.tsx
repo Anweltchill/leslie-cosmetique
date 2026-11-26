@@ -57,6 +57,11 @@ export function BookingPage({ slug }: { slug?: string }) {
     path: '/reserver',
   });
 
+  // Arrivée directe sur /reserver/<séance> : le choix de la séance compte comme une étape du tunnel.
+  useEffect(() => {
+    if (initial && usesCalendar(initial)) track('booking_offer_select', { offer: initial.slug, where: 'direct' });
+  }, [initial]);
+
   // Créneaux libres de la séance choisie, sur les 3 prochains mois (disponibilités saisies dans l'admin).
   const offerSlug = offer?.slug;
   useEffect(() => {
@@ -308,7 +313,10 @@ export function BookingPage({ slug }: { slug?: string }) {
                     day={day}
                     onDayChange={(d) => { setDay(d); setSlot(null); }}
                     slot={slot}
-                    onSlotChange={setSlot}
+                    onSlotChange={(s) => {
+                      setSlot(s);
+                      if (offer) track('booking_slot_select', { offer: offer.slug });
+                    }}
                     available={available}
                     loading={loading}
                     loadError={loadError}

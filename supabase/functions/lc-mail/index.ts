@@ -42,7 +42,13 @@ async function patch(id: string, body: Record<string, unknown>) {
 async function build(row: Row, cfg: { notifyTo: string; meetUrl: string }): Promise<{ ctx: Ctx; replyTo: string } | { skip: string }> {
   if (row.kind === 'preview') {
     const as = String(row.data?.as ?? '') as Kind;
-    const ctx = sample(as, cfg.meetUrl);
+    const ctx: Ctx = { ...sample(as, cfg.meetUrl), preview: true };
+    // Aperçu du guide : vrai lien de téléchargement (l'aperçu ne part qu'aux adresses saisies dans l'admin).
+    if (as === 'guide_link' && ctx.payment) {
+      const item = CATALOG[ctx.payment.offer_slug];
+      const url = item?.file ? await signedGuideUrl(item.file, item.fileName ?? item.file) : null;
+      if (url) ctx.downloadUrl = url;
+    }
     return { ctx, replyTo: cfg.notifyTo };
   }
 

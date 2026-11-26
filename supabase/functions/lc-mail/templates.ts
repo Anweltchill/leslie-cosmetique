@@ -51,6 +51,8 @@ export interface Ctx {
   /** Mot de Leslie (annulation, déplacement). */
   message?: string;
   now?: Date;
+  /** Aperçu envoyé depuis l'admin : bandeau « exemple » en haut de l'e-mail. */
+  preview?: boolean;
 }
 export interface Mail {
   subject: string;
@@ -305,6 +307,9 @@ const signature = () => `<table role="presentation" cellspacing="0" cellpadding=
 <div style="font-family:${SERIF};font-style:italic;font-size:19px;color:${C.ink};">Leslie</div>
 Leslie Cosmétique · formulation et soins naturels</td></tr></table>`;
 
+// Aperçu en cours de rendu (fixé par render, lu par layout).
+let previewNote = '';
+
 interface Layout {
   preheader: string;
   badge?: string;
@@ -333,6 +338,7 @@ function layout(l: Layout) {
   </tr></table>
   <div style="margin-top:9px;font-family:${SANS};font-size:10.5px;letter-spacing:3.4px;text-transform:uppercase;color:${C.brown};">Leslie Cosmétique</div>
 </td></tr>
+${previewNote ? `<tr><td style="padding:0 0 12px 0;"><div style="background:#F3E3C4;border:1px dashed #C9A36B;border-radius:12px;padding:10px 14px;font-family:${SANS};font-size:12.5px;line-height:1.5;color:#7A4F12;"><strong>Aperçu</strong> · ${previewNote}</div></td></tr>` : ''}
 <tr><td bgcolor="${C.card}" style="background:${C.card};border:1px solid ${C.line};border-radius:20px;padding:34px 30px 30px 30px;">
   ${l.badge ?? ''}
   <h1 style="margin:${l.badge ? '14px' : '0'} 0 16px 0;font-family:${SERIF};font-weight:normal;font-size:27px;line-height:1.25;color:${C.ink};">${l.title}</h1>
@@ -399,6 +405,11 @@ function joinBlock(b: Booking) {
 
 /* ───────── Modèles ───────── */
 export function render(ctx: Ctx): Mail {
+  previewNote = ctx.preview
+    ? ctx.kind === 'guide_link'
+      ? 'exemple avec une cliente fictive. Le bouton télécharge le vrai guide (lien valable 7 jours), comme pour une vraie cliente.'
+      : 'exemple avec une cliente fictive et une date fictive. Dans les vrais e-mails : les informations de la cliente, la date qu’elle a réservée et le lien de visio que vous indiquez en confirmant.'
+    : '';
   const now = ctx.now ?? new Date();
   const b = ctx.booking ?? null;
   const pay = ctx.payment ?? null;

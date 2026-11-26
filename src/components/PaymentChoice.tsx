@@ -14,7 +14,7 @@ interface Props {
   onClose: () => void;
   offerName: string;
   price: number;
-  checkout: CheckoutInput;
+  checkout: CheckoutInput & { offer_slug: string };
   /** Précision ajoutée au message WhatsApp (ex. date du rendez-vous réservé). */
   detail?: string;
 }

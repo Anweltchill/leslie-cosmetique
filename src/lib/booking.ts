@@ -74,15 +74,30 @@ export async function fallbackSlots(from: Date, to: Date): Promise<Date[]> {
 
 export type BookingResult = { ok: true } | { ok: false; reason: 'taken' | 'error' };
 
+/** Fuseau horaire du navigateur (les e-mails affichent l'heure locale de la cliente). */
+const browserTz = () => {
+  try {
+    return (Intl.DateTimeFormat().resolvedOptions().timeZone ?? '').slice(0, 64);
+  } catch {
+    return '';
+  }
+};
+
 export async function createBooking(input: BookingInput): Promise<BookingResult> {
-  const { error } = await supabase.from('lc_booking_requests').insert({
+  const row = {
     offer_slug: input.offerSlug,
     starts_at: input.startsAt.toISOString(),
     full_name: input.fullName.trim(),
     email: input.email.trim(),
     phone: input.phone.trim(),
     message: input.message.trim(),
-  });
+  };
+  const tz = browserTz();
+  let { error } = await supabase.from('lc_booking_requests').insert(tz ? { ...row, timezone: tz } : row);
+  // Base pas encore à jour (colonne « timezone » absente) : on réessaie sans le fuseau.
+  if (error && tz && (error.code === 'PGRST204' || error.code === '42703' || /timezone/i.test(error.message))) {
+    ({ error } = await supabase.from('lc_booking_requests').insert(row));
+  }
   if (!error) return { ok: true };
   return { ok: false, reason: error.code === '23505' ? 'taken' : 'error' };
 }

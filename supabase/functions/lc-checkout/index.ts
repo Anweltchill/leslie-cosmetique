@@ -1,8 +1,9 @@
 // lc-checkout — paiement Stripe Checkout des offres de Leslie Cosmétique.
 //   POST                      { offer_slug, email?, name?, booking_starts_at?, cancel_path? } → { url }
+//   POST                      { booking_id } (lien « Payer par carte » des e-mails) → { url }
 //   GET  ?session_id=cs_...   état du paiement (+ lien de téléchargement du guide une fois payé)
 //   GET  ?check=1             diagnostic de configuration (aucune donnée sensible)
-import { CATALOG, SITE, corsHeaders, json, logEvent, originOk, recordSession, signedGuideUrl, stripe, stripeKey } from '../_shared/lc.ts';
+import { CATALOG, SITE, corsHeaders, db, json, logEvent, originOk, recordSession, signedGuideUrl, stripe, stripeKey } from '../_shared/lc.ts';
 
 const EMAIL = /^[^@\s]{1,100}@[^@\s]{1,100}\.[^@\s]{2,}$/;
 const token = (v: unknown, max: number) => String(v ?? '').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, max);
@@ -92,6 +93,20 @@ Deno.serve(async (req) => {
     if (!stripeKey()) return json({ error: 'stripe_non_configure' }, 503, cors);
 
     const body = await req.json().catch(() => ({}));
+
+    // Séance déjà réservée : l'offre, la date et l'e-mail sont lus dans la réservation (jamais dans le navigateur).
+    let bookingId = '';
+    if (body.booking_id) {
+      bookingId = String(body.booking_id);
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(bookingId)) return json({ error: 'reservation_introuvable' }, 404, cors);
+      const b = (await db(`lc_booking_requests?id=eq.${bookingId}&select=offer_slug,starts_at,email,full_name,status`))?.[0];
+      if (!b || !['pending', 'confirmed'].includes(b.status)) return json({ error: 'reservation_introuvable' }, 404, cors);
+      if (new Date(b.starts_at).getTime() < Date.now()) return json({ error: 'reservation_passee' }, 410, cors);
+      const paid = await db(`lc_payments?booking_id=eq.${bookingId}&status=eq.paid&select=id&limit=1`);
+      if (paid?.length) return json({ error: 'deja_regle' }, 409, cors);
+      Object.assign(body, { offer_slug: b.offer_slug, email: b.email, name: b.full_name, booking_starts_at: b.starts_at, cancel_path: '/' });
+    }
+
     const slug = String(body.offer_slug ?? '');
     const item = CATALOG[slug];
     if (!item) return json({ error: 'offre_inconnue' }, 400, cors);
@@ -124,6 +139,7 @@ Deno.serve(async (req) => {
     if (startsAt && item.kind === 'coaching') {
       p.set('metadata[booking_starts_at]', startsAt.toISOString());
       if (EMAIL.test(email)) p.set('metadata[booking_email]', email);
+      if (bookingId) p.set('metadata[booking_id]', bookingId);
     }
     // Attribution (source de la visite, lien de suivi) pour les statistiques de l'admin
     const attr = {

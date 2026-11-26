@@ -84,3 +84,14 @@ export function useJsonLd(id: string, data: Record<string, unknown> | null) {
     return () => script.remove();
   }, [id, json]);
 }
+
+/** Page à ne pas référencer (paiement, confirmation). */
+export function useNoIndex() {
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    return () => meta.remove();
+  }, []);
+}

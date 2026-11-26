@@ -128,6 +128,8 @@ export function Payments() {
 
 function AddPayment({ onDone }: { onDone: () => void }) {
   const [form, setForm] = useState({ offer: visibleOffers[0]?.slug ?? '', amount: String(visibleOffers[0]?.price ?? ''), name: '', email: '', date: new Date().toISOString().slice(0, 10), note: '' });
+  const [sendGuide, setSendGuide] = useState(true);
+  const isGuide = form.offer.startsWith('guide');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -138,14 +140,22 @@ function AddPayment({ onDone }: { onDone: () => void }) {
     setBusy(true);
     setError('');
     try {
-      await rpc('lc_admin_add_payment', {
+      const args = {
         p_offer_slug: form.offer,
         p_amount_cents: cents,
         p_customer_name: form.name.trim(),
         p_customer_email: form.email.trim(),
         p_paid_at: new Date(`${form.date}T12:00:00`).toISOString(),
         p_note: form.note.trim(),
-      });
+      };
+      const mail = isGuide && sendGuide && Boolean(form.email.trim());
+      try {
+        await rpc('lc_admin_add_payment', { ...args, p_send_mail: mail });
+      } catch (err) {
+        // base pas encore à jour : enregistrement sans envoi automatique
+        if (!/could not find the function/i.test((err as Error).message)) throw err;
+        await rpc('lc_admin_add_payment', args);
+      }
       onDone();
     } catch (err) {
       setError((err as Error).message);
@@ -190,6 +200,15 @@ function AddPayment({ onDone }: { onDone: () => void }) {
           Note (moyen de paiement…)
           <input value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} className={`${inputCls} mt-1`} />
         </label>
+        {isGuide && (
+          <label className="flex items-start gap-2 text-[13px] text-espresso md:col-span-3">
+            <input type="checkbox" checked={sendGuide} onChange={(e) => setSendGuide(e.target.checked)} className="mt-0.5 accent-[#3a2a22]" />
+            <span>
+              Envoyer automatiquement le guide par e-mail au client
+              <span className="block text-[12px] text-brown">Lien de téléchargement valable 7 jours, envoyé à l’e-mail ci-dessus (utile pour les paiements Mobile Money).</span>
+            </span>
+          </label>
+        )}
         <div className="flex items-center gap-3 md:col-span-3">
           <button type="submit" disabled={busy} className={btnCls}>{busy && <Loader2 size={14} className="animate-spin" />} Enregistrer le paiement</button>
           <button type="button" onClick={onDone} className={btnGhostCls}>Annuler</button>

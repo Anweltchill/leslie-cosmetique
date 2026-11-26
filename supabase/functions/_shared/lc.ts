@@ -100,6 +100,7 @@ export async function logEvent(row: Record<string, string>) {
 const euros = (cents: number) => `${(cents / 100).toLocaleString('fr-FR', { minimumFractionDigits: cents % 100 ? 2 : 0 })} €`;
 
 // deno-lint-ignore no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Session = any;
 
 /**
@@ -129,7 +130,12 @@ export async function recordSession(session: Session, forced?: 'failed') {
   // Séance réservée sur le calendrier : on relie le paiement à la réservation.
   let booking: { id: string; admin_note: string } | null = null;
   const startsAt = session.metadata.booking_starts_at;
-  if (startsAt && item?.kind === 'coaching') {
+  const bookingId = String(session.metadata.booking_id ?? '');
+  if (/^[0-9a-f-]{36}$/i.test(bookingId) && item?.kind === 'coaching') {
+    const rows = await db(`lc_booking_requests?select=id,admin_note&id=eq.${bookingId}&status=in.(pending,confirmed)&limit=1`);
+    booking = rows?.[0] ?? null;
+  }
+  if (!booking && startsAt && item?.kind === 'coaching') {
     const bEmail = String(session.metadata.booking_email || email);
     const rows = await db(
       `lc_booking_requests?select=id,admin_note&offer_slug=eq.${encodeURIComponent(slug)}` +

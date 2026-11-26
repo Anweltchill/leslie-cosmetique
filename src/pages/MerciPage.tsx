@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { AlertCircle, CalendarCheck2, Check, Download, Loader2, RotateCcw } from 'lucide-react';
 import { getOffer, formatPrice } from '@/data/offers';
 import { site } from '@/data/site';
-import { useSeo } from '@/lib/seo';
+import { useNoIndex, useSeo } from '@/lib/seo';
+import { Shell } from '@/components/ResultShell';
 import { Link } from '@/lib/router';
 import { track } from '@/lib/track';
 import { fetchCheckoutStatus, lastCheckout, startCheckout, type CheckoutStatus } from '@/lib/checkout';
@@ -13,16 +14,6 @@ const btn =
   'inline-flex items-center justify-center gap-2 rounded-full bg-espresso px-6 py-3 text-[14px] font-medium text-white-warm transition-colors hover:bg-brown disabled:cursor-wait disabled:opacity-75';
 const btnGhost =
   'inline-flex items-center justify-center rounded-full border border-sand px-6 py-3 text-[14px] font-medium text-espresso transition-colors hover:bg-nude';
-
-function useNoIndex() {
-  useEffect(() => {
-    const meta = document.createElement('meta');
-    meta.name = 'robots';
-    meta.content = 'noindex, nofollow';
-    document.head.appendChild(meta);
-    return () => meta.remove();
-  }, []);
-}
 
 /** Page de retour après le paiement Stripe (succès ou abandon). */
 export function MerciPage() {
@@ -47,17 +38,6 @@ export function MerciPage() {
   );
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="bg-cream pb-20 pt-32 md:pt-40">
-      <div className="mx-auto max-w-[640px] px-5">
-        <div className="rounded-[24px] border border-sand/70 bg-white-warm px-6 py-10 text-center shadow-[0_24px_50px_-36px_rgba(107,74,56,0.45)] md:px-10 md:py-12">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function Success({ sessionId }: { sessionId: string }) {
   const [data, setData] = useState<CheckoutStatus | null>(null);
@@ -157,7 +137,7 @@ function Success({ sessionId }: { sessionId: string }) {
           )}
           <p className="mx-auto mt-5 max-w-[460px] text-[13px] leading-relaxed text-brown">
             Enregistrez le guide sur votre téléphone ou votre ordinateur : ce lien de téléchargement reste valable 7 jours.
-            {data.email ? ` Votre reçu a été envoyé à ${data.email}.` : ''}
+            {data.email ? ` Vous recevez aussi le lien par e-mail à ${data.email}, avec votre reçu.` : ' Vous recevez aussi le lien par e-mail, avec votre reçu.'}
           </p>
         </>
       ) : (
@@ -187,7 +167,7 @@ function Success({ sessionId }: { sessionId: string }) {
 function Cancelled({ slug, backPath }: { slug: string; backPath: string }) {
   const offer = getOffer(slug);
   const last = lastCheckout();
-  const canRetry = Boolean(last && last.offer_slug === slug);
+  const canRetry = Boolean(last && (last.offer_slug === slug || last.booking_id));
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const isCoaching = offer?.kind === 'coaching';

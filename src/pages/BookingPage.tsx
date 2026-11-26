@@ -195,7 +195,7 @@ export function BookingPage({ slug }: { slug?: string }) {
                 <p className="mx-auto mt-2 max-w-[460px] text-[14.5px] leading-relaxed text-brown">
                   Votre créneau du <strong className="font-medium text-espresso">{longFmt.format(slot)} à {timeFmt.format(slot)}</strong> est bloqué.
                   {paysOnline(offer.slug) ? ' Réglez votre séance en ligne pour finaliser votre réservation. ' : ' '}
-                  Leslie vous confirme le rendez-vous par e-mail à {form.email} avec le lien visio.
+                  Un récapitulatif vient de vous être envoyé à {form.email} ; Leslie vous confirme ensuite le rendez-vous par e-mail avec le lien visio.
                 </p>
                 <div className="mt-7 flex flex-wrap justify-center gap-3">
                   {paysOnline(offer.slug) ? (

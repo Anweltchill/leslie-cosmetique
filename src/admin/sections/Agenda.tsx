@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { CalendarPlus, ChevronLeft, ChevronRight, Loader2, Mail, Phone, X } from 'lucide-react';
+import { AlertCircle, CalendarPlus, Check, ChevronLeft, ChevronRight, Clock, Loader2, Mail, Phone, Video, X } from 'lucide-react';
 import { Link } from '@/lib/router';
-import { rpc, type Booking, type BookingStatus } from '../api';
+import { EMAIL_LABEL, rpc, type Booking, type BookingStatus, type MailSettings } from '../api';
 import { Badge, Card, Empty } from '../ui';
-import { btnCls, btnGhostCls, fmtDateTime, fmtTime, inputCls } from '../format';
+import { btnCls, btnGhostCls, dateToParis, euros, fmtDateTime, fmtTime, inputCls, parisToDate } from '../format';
 import { Availability } from './Availability';
 
 const STATUS: Record<BookingStatus, { label: string; tone: 'gold' | 'green' | 'red' | 'grey' }> = {
@@ -82,6 +82,7 @@ function Bookings({ onChange }: { onChange?: () => void }) {
       ]);
       setBookings(b);
       setUpcoming(u.filter((x) => x.status === 'pending' || x.status === 'confirmed'));
+      setSelected((cur) => (cur ? [...b, ...u].find((x) => x.id === cur.id) ?? cur : cur));
     } catch (e) {
       setError((e as Error).message);
     }
@@ -90,6 +91,12 @@ function Bookings({ onChange }: { onChange?: () => void }) {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Lien visio par défaut (Paramètres → E-mails automatiques)
+  const [defaultMeet, setDefaultMeet] = useState('');
+  useEffect(() => {
+    rpc<MailSettings>('lc_admin_mail_settings').then((m) => setDefaultMeet(m.meet_url ?? '')).catch(() => undefined);
+  }, []);
 
   const cells = useMemo(() => {
     const first = new Date(month);
@@ -109,8 +116,11 @@ function Bookings({ onChange }: { onChange?: () => void }) {
 
   const update = async (b: Booking, status: BookingStatus | null, note: string | null) => {
     await rpc('lc_admin_update_booking', { p_id: b.id, p_status: status, p_note: note });
-    const next = { ...b, status: status ?? b.status, admin_note: note ?? b.admin_note };
-    setSelected(next);
+    setSelected({ ...b, status: status ?? b.status, admin_note: note ?? b.admin_note });
+    await load();
+    onChange?.();
+  };
+  const refresh = async () => {
     await load();
     onChange?.();
   };
@@ -192,7 +202,7 @@ function Bookings({ onChange }: { onChange?: () => void }) {
                 </button>
               }
             >
-              <BookingDetail booking={selected} onUpdate={update} />
+              <BookingDetail booking={selected} onUpdate={update} onRefresh={refresh} defaultMeet={defaultMeet} />
             </Card>
           )}
           <Card title="Prochains rendez-vous">
@@ -220,10 +230,79 @@ function Bookings({ onChange }: { onChange?: () => void }) {
   );
 }
 
-function BookingDetail({ booking: b, onUpdate }: { booking: Booking; onUpdate: (b: Booking, s: BookingStatus | null, n: string | null) => Promise<void> }) {
+const missingFn = (e: unknown) => /could not find the function/i.test((e as Error)?.message ?? '');
+const EMAIL_STATUS: Record<string, { label: string; cls: string }> = {
+  sent: { label: 'envoyé', cls: 'text-[#3f6b3a]' },
+  queued: { label: 'en cours d’envoi', cls: 'text-[#7a4f12]' },
+  sending: { label: 'en cours d’envoi', cls: 'text-[#7a4f12]' },
+  failed: { label: 'échec', cls: 'text-[#9b3b2a]' },
+  skipped: { label: 'non envoyé (plus nécessaire)', cls: 'text-brown' },
+};
+const shortFmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
+const localTime = (iso: string, tz: string) => {
+  try {
+    return new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(new Date(iso));
+  } catch {
+    return '';
+  }
+};
+
+type Mode = null | 'confirm' | 'move' | 'cancel' | 'link';
+
+function BookingDetail({
+  booking: b,
+  onUpdate,
+  onRefresh,
+  defaultMeet,
+}: {
+  booking: Booking;
+  onUpdate: (b: Booking, s: BookingStatus | null, n: string | null) => Promise<void>;
+  onRefresh: () => Promise<void>;
+  defaultMeet: string;
+}) {
   const [note, setNote] = useState(b.admin_note);
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<Mode>(null);
+  const [meet, setMeet] = useState('');
+  const [notify, setNotify] = useState(true);
+  const [msg, setMsg] = useState('');
+  const [day, setDay] = useState('');
+  const [time, setTime] = useState('');
+  const [error, setError] = useState('');
+  const [flash, setFlash] = useState('');
   useEffect(() => setNote(b.admin_note), [b.id, b.admin_note]);
+  useEffect(() => {
+    setMode(null);
+    setError('');
+    setFlash('');
+  }, [b.id]);
+
+  const open = (m: Mode) => {
+    setError('');
+    setFlash('');
+    setNotify(true);
+    setMsg('');
+    setMeet(b.meet_url || defaultMeet);
+    const p = dateToParis(new Date(b.starts_at));
+    setDay(p.day);
+    setTime(p.time);
+    setMode(m);
+  };
+
+  const run = async (fn: () => Promise<unknown>, done: string) => {
+    setBusy(true);
+    setError('');
+    try {
+      await fn();
+      setMode(null);
+      setFlash(done);
+      await onRefresh();
+    } catch (e) {
+      setError(missingFn(e) ? 'Fonction indisponible : la mise à jour de la base (e-mails automatiques) n’est pas encore installée.' : (e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const act = async (s: BookingStatus | null, n: string | null) => {
     setBusy(true);
@@ -234,8 +313,73 @@ function BookingDetail({ booking: b, onUpdate }: { booking: Booking; onUpdate: (
     }
   };
 
+  const confirm = () =>
+    run(async () => {
+      try {
+        await rpc('lc_admin_confirm_booking', { p_id: b.id, p_meet_url: meet, p_notify: notify });
+      } catch (e) {
+        if (!missingFn(e)) throw e;
+        await rpc('lc_admin_update_booking', { p_id: b.id, p_status: 'confirmed', p_note: null });
+      }
+    }, notify ? 'Rendez-vous confirmé : la cliente reçoit l’e-mail avec le lien de la visio.' : 'Rendez-vous confirmé (sans e-mail).');
+
+  const cancel = () =>
+    run(async () => {
+      try {
+        await rpc('lc_admin_cancel_booking', { p_id: b.id, p_message: msg.trim(), p_notify: notify });
+      } catch (e) {
+        if (!missingFn(e)) throw e;
+        await rpc('lc_admin_update_booking', { p_id: b.id, p_status: 'cancelled', p_note: null });
+      }
+    }, notify ? 'Rendez-vous annulé : la cliente est prévenue par e-mail.' : 'Rendez-vous annulé (sans e-mail).');
+
+  const move = () => {
+    const d = parisToDate(day, time);
+    if (!d) return setError('Indiquez une date et une heure.');
+    return run(
+      () => rpc('lc_admin_move_booking', { p_id: b.id, p_starts_at: d.toISOString(), p_message: msg.trim(), p_notify: notify }),
+      notify ? 'Rendez-vous déplacé : la cliente reçoit le nouvel horaire par e-mail.' : 'Rendez-vous déplacé (sans e-mail).',
+    );
+  };
+
+  const saveLink = () =>
+    run(async () => {
+      await rpc('lc_admin_save_meet_url', { p_id: b.id, p_meet_url: meet });
+      if (notify && b.status === 'confirmed') await rpc('lc_admin_resend_booking_email', { p_id: b.id, p_kind: 'booking_confirmed' });
+    }, notify && b.status === 'confirmed' ? 'Lien enregistré et confirmation renvoyée à la cliente.' : 'Lien enregistré.');
+
+  const resend = (kind: 'booking_request' | 'booking_confirmed') =>
+    run(() => rpc('lc_admin_resend_booking_email', { p_id: b.id, p_kind: kind }), 'E-mail renvoyé à la cliente.');
+
   const subject = encodeURIComponent(`Votre rendez-vous — ${b.offer_name}`);
   const when = fmtDateTime.format(new Date(b.starts_at));
+  const tz = b.timezone && b.timezone !== 'Europe/Paris' ? b.timezone : '';
+  const clientTime = tz ? localTime(b.starts_at, tz) : '';
+  const showClientTime = clientTime && clientTime !== fmtTime.format(new Date(b.starts_at));
+  const active = b.status === 'pending' || b.status === 'confirmed';
+  const hasMailFeatures = b.emails !== undefined;
+
+  const notifyBox = (label: string) => (
+    <label className="flex items-start gap-2 text-[12.5px] text-espresso">
+      <input type="checkbox" checked={notify} onChange={(e) => setNotify(e.target.checked)} className="mt-0.5 accent-[#3a2a22]" />
+      <span>{label}</span>
+    </label>
+  );
+  const messageBox = (
+    <label className="block text-[12px] font-medium text-brown">
+      Mot pour la cliente (facultatif, ajouté à l’e-mail)
+      <textarea rows={2} value={msg} onChange={(e) => setMsg(e.target.value)} maxLength={1500} className={`${inputCls} mt-1 resize-none`} />
+    </label>
+  );
+  const meetInput = (
+    <label className="block text-[12px] font-medium text-brown">
+      Lien de la visio (Google Meet, Zoom…)
+      <input value={meet} onChange={(e) => setMeet(e.target.value)} placeholder="https://meet.google.com/…" className={`${inputCls} mt-1`} inputMode="url" />
+      <span className="mt-1 block font-normal text-brown/80">
+        Sur meet.google.com : « Nouvelle réunion » → « Créer une réunion pour plus tard », puis collez le lien ici.
+      </span>
+    </label>
+  );
 
   return (
     <div className="space-y-3 text-[13.5px] text-espresso">
@@ -244,19 +388,143 @@ function BookingDetail({ booking: b, onUpdate }: { booking: Booking; onUpdate: (
         <span className="first-letter:uppercase">{when}</span>
         <span className="text-brown">· {b.minutes} min</span>
       </div>
+      {showClientTime && (
+        <p className="flex items-center gap-1.5 text-[12.5px] text-brown">
+          <Clock size={13} aria-hidden /> {clientTime} pour la cliente ({tz.split('/').pop()?.replace(/_/g, ' ')})
+        </p>
+      )}
       <div>
         <p className="font-medium">{b.full_name}</p>
         <a href={`mailto:${b.email}?subject=${subject}`} className="mt-1 flex items-center gap-1.5 text-brown hover:text-espresso"><Mail size={13} /> {b.email}</a>
         {b.phone && <a href={`tel:${b.phone.replace(/\s/g, '')}`} className="mt-1 flex items-center gap-1.5 text-brown hover:text-espresso"><Phone size={13} /> {b.phone}</a>}
       </div>
       {b.message && <p className="whitespace-pre-wrap rounded-[12px] bg-cream p-3 text-[13px] leading-relaxed">{b.message}</p>}
-      <div className="flex flex-wrap gap-2">
-        {b.status !== 'confirmed' && <button type="button" disabled={busy} onClick={() => act('confirmed', null)} className={btnCls}>Confirmer</button>}
-        {b.status !== 'done' && b.status !== 'cancelled' && <button type="button" disabled={busy} onClick={() => act('done', null)} className={btnGhostCls}>Terminé</button>}
-        {b.status !== 'cancelled' && <button type="button" disabled={busy} onClick={() => act('cancelled', null)} className={btnGhostCls}>Annuler</button>}
-        {b.status !== 'pending' && <button type="button" disabled={busy} onClick={() => act('pending', null)} className={btnGhostCls}>Remettre « à confirmer »</button>}
-      </div>
-      <p className="text-[11.5px] text-brown">Annuler libère le créneau dans le calendrier du site.</p>
+
+      {hasMailFeatures && (
+        <div className="space-y-1.5 rounded-[12px] border border-sand/70 p-3 text-[12.5px]">
+          <p className="flex items-center gap-1.5">
+            <span className="w-[62px] shrink-0 text-brown">Paiement</span>
+            {(b.paid_cents ?? 0) > 0 ? (
+              <span className="font-medium text-[#3f6b3a]">Réglé · {euros(b.paid_cents ?? 0)}</span>
+            ) : (
+              <span className="text-[#7a4f12]">Pas de paiement en ligne enregistré</span>
+            )}
+          </p>
+          <p className="flex items-center gap-1.5">
+            <span className="w-[62px] shrink-0 text-brown">Visio</span>
+            {b.meet_url ? (
+              <a href={b.meet_url} target="_blank" rel="noopener noreferrer" className="min-w-0 truncate text-caramel underline">{b.meet_url.replace(/^https?:\/\//, '')}</a>
+            ) : (
+              <span className="text-brown">pas encore de lien</span>
+            )}
+            {active && mode !== 'link' && (
+              <button type="button" onClick={() => open('link')} className="ml-auto shrink-0 text-[12px] font-medium text-espresso underline">
+                {b.meet_url ? 'Modifier' : 'Ajouter'}
+              </button>
+            )}
+          </p>
+        </div>
+      )}
+
+      {flash && (
+        <p className="flex items-start gap-1.5 rounded-[10px] bg-[#e3ecdf] p-2.5 text-[12.5px] text-[#3f6b3a]">
+          <Check size={14} className="mt-0.5 shrink-0" /> {flash}
+        </p>
+      )}
+      {error && (
+        <p className="flex items-start gap-1.5 rounded-[10px] bg-[#f4dcd6] p-2.5 text-[12.5px] text-[#9b3b2a]">
+          <AlertCircle size={14} className="mt-0.5 shrink-0" /> {error}
+        </p>
+      )}
+
+      {mode === 'confirm' && (
+        <div className="space-y-3 rounded-[12px] bg-cream p-3">
+          {meetInput}
+          {notifyBox('Envoyer la confirmation par e-mail (lien visio, ajout à l’agenda, rappel automatique la veille)')}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy} onClick={confirm} className={btnCls}>{busy && <Loader2 size={14} className="animate-spin" />} Confirmer le rendez-vous</button>
+            <button type="button" disabled={busy} onClick={() => setMode(null)} className={btnGhostCls}>Retour</button>
+          </div>
+        </div>
+      )}
+      {mode === 'link' && (
+        <div className="space-y-3 rounded-[12px] bg-cream p-3">
+          {meetInput}
+          {b.status === 'confirmed' && notifyBox('Renvoyer la confirmation avec ce lien à la cliente')}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy} onClick={saveLink} className={btnCls}>{busy && <Loader2 size={14} className="animate-spin" />} Enregistrer le lien</button>
+            <button type="button" disabled={busy} onClick={() => setMode(null)} className={btnGhostCls}>Retour</button>
+          </div>
+        </div>
+      )}
+      {mode === 'move' && (
+        <div className="space-y-3 rounded-[12px] bg-cream p-3">
+          <div className="grid grid-cols-2 gap-2">
+            <label className="text-[12px] font-medium text-brown">
+              Nouvelle date
+              <input type="date" value={day} onChange={(e) => setDay(e.target.value)} className={`${inputCls} mt-1`} />
+            </label>
+            <label className="text-[12px] font-medium text-brown">
+              Heure (Paris)
+              <input type="time" value={time} onChange={(e) => setTime(e.target.value)} step={300} className={`${inputCls} mt-1`} />
+            </label>
+          </div>
+          {messageBox}
+          {notifyBox('Prévenir la cliente par e-mail du nouvel horaire')}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy} onClick={move} className={btnCls}>{busy && <Loader2 size={14} className="animate-spin" />} Déplacer le rendez-vous</button>
+            <button type="button" disabled={busy} onClick={() => setMode(null)} className={btnGhostCls}>Retour</button>
+          </div>
+        </div>
+      )}
+      {mode === 'cancel' && (
+        <div className="space-y-3 rounded-[12px] bg-cream p-3">
+          {messageBox}
+          {notifyBox('Prévenir la cliente par e-mail (avec un lien pour réserver un autre créneau)')}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy} onClick={cancel} className={btnCls}>{busy && <Loader2 size={14} className="animate-spin" />} Annuler le rendez-vous</button>
+            <button type="button" disabled={busy} onClick={() => setMode(null)} className={btnGhostCls}>Retour</button>
+          </div>
+          <p className="text-[11.5px] text-brown">Annuler libère le créneau dans le calendrier du site.</p>
+        </div>
+      )}
+
+      {mode === null && (
+        <div className="flex flex-wrap gap-2">
+          {b.status === 'pending' && <button type="button" disabled={busy} onClick={() => open('confirm')} className={btnCls}><Video size={14} /> Confirmer</button>}
+          {active && hasMailFeatures && <button type="button" disabled={busy} onClick={() => open('move')} className={btnGhostCls}>Déplacer</button>}
+          {b.status === 'confirmed' && <button type="button" disabled={busy} onClick={() => act('done', null)} className={btnGhostCls}>Terminé</button>}
+          {active && <button type="button" disabled={busy} onClick={() => open('cancel')} className={btnGhostCls}>Annuler</button>}
+          {!active && <button type="button" disabled={busy} onClick={() => act('pending', null)} className={btnGhostCls}>Remettre « à confirmer »</button>}
+        </div>
+      )}
+
+      {hasMailFeatures && (
+        <div className="border-t border-sand/60 pt-3">
+          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-brown">E-mails envoyés à la cliente</p>
+          {b.emails && b.emails.length ? (
+            <ul className="mt-1.5 space-y-1 text-[12.5px]">
+              {b.emails.map((e, i) => (
+                <li key={i} className="flex flex-wrap items-baseline gap-x-1.5">
+                  <span className="text-espresso">{EMAIL_LABEL[e.kind] ?? e.kind}</span>
+                  <span className={EMAIL_STATUS[e.status]?.cls}>· {EMAIL_STATUS[e.status]?.label ?? e.status}</span>
+                  <span className="text-brown/80">· {shortFmt.format(new Date(e.sent_at ?? e.created_at))}</span>
+                  {e.status === 'failed' && e.error && <span className="w-full text-[11.5px] text-[#9b3b2a]">{e.error}</span>}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-1 text-[12.5px] text-brown">Aucun e-mail pour ce rendez-vous (réservé avant la mise en place des e-mails).</p>
+          )}
+          {active && mode === null && (
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[12px]">
+              <button type="button" disabled={busy} onClick={() => resend('booking_request')} className="font-medium text-espresso underline">Renvoyer le récapitulatif</button>
+              {b.status === 'confirmed' && <button type="button" disabled={busy} onClick={() => resend('booking_confirmed')} className="font-medium text-espresso underline">Renvoyer la confirmation</button>}
+            </div>
+          )}
+        </div>
+      )}
+
       <label className="block text-[12px] font-medium text-brown">
         Note interne
         <textarea rows={3} value={note} onChange={(e) => setNote(e.target.value)} className={`${inputCls} mt-1 resize-none`} maxLength={2000} />

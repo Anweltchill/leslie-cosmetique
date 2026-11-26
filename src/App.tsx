@@ -18,6 +18,7 @@ import { AboutPage } from '@/pages/AboutPage';
 import { ContactPage } from '@/pages/ContactPage';
 import { BookingPage } from '@/pages/BookingPage';
 import { MerciPage } from '@/pages/MerciPage';
+import { PayPage } from '@/pages/PayPage';
 import { LinkPage } from '@/pages/LinkPage';
 import { MentionsLegalesPage, CgvPage, ConfidentialitePage } from '@/pages/LegalPages';
 
@@ -76,6 +77,7 @@ function Routes({ introDone }: { introDone: boolean }) {
     if (path === '/reserver') return <BookingPage />;
     if (path.startsWith('/reserver/')) return <BookingPage slug={path.replace('/reserver/', '')} />;
     if (path === '/merci') return <MerciPage />;
+    if (path === '/payer') return <PayPage />;
     if (path.startsWith('/l/')) return <LinkPage code={path.slice(3).split('/')[0]} />;
     if (path === '/mentions-legales') return <MentionsLegalesPage />;
     if (path === '/cgv') return <CgvPage />;

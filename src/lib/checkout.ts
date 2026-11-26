@@ -23,7 +23,9 @@ export const ONLINE_PAYMENT = new Set([
 export const paysOnline = (slug: string) => ONLINE_PAYMENT.has(slug);
 
 export interface CheckoutInput {
-  offer_slug: string;
+  offer_slug?: string;
+  /** Séance déjà réservée (lien « Payer par carte » des e-mails) : l'offre, la date et l'e-mail viennent du serveur. */
+  booking_id?: string;
   email?: string;
   name?: string;
   /** Coaching réservé sur le calendrier : date du rendez-vous (relie le paiement à la réservation). */
@@ -40,8 +42,8 @@ export async function startCheckout(input: CheckoutInput): Promise<void> {
   const attr = getAttribution();
   const body = { ...input, ...visitIds(), source: attr.source, campaign: attr.campaign, device: window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop' };
   const res = await fetch(FN_URL, { method: 'POST', headers, body: JSON.stringify(body) });
-  const data = (await res.json().catch(() => ({}))) as { url?: string };
-  if (!res.ok || !data.url) throw new Error('checkout');
+  const data = (await res.json().catch(() => ({}))) as { url?: string; error?: string };
+  if (!res.ok || !data.url) throw new Error(data.error || 'checkout');
   try {
     sessionStorage.setItem(LAST_KEY, JSON.stringify(input));
   } catch {

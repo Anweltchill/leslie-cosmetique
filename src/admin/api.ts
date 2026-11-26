@@ -92,7 +92,44 @@ export interface Booking {
   status: BookingStatus;
   admin_note: string;
   created_at: string;
+  /** Champs ajoutés avec les e-mails automatiques (absents tant que la base n'est pas à jour). */
+  meet_url?: string;
+  timezone?: string;
+  paid_cents?: number;
+  emails?: BookingEmail[];
 }
+export type EmailKind =
+  | 'booking_request' | 'booking_new' | 'booking_paid' | 'booking_confirmed' | 'booking_reminder'
+  | 'booking_moved' | 'booking_cancelled' | 'guide_link' | 'sale_new' | 'preview';
+export type EmailStatus = 'queued' | 'sending' | 'sent' | 'failed' | 'skipped';
+export interface BookingEmail {
+  kind: EmailKind;
+  status: EmailStatus;
+  created_at: string;
+  sent_at: string | null;
+  error: string;
+}
+export interface MailSettings {
+  enabled: boolean;
+  notify_to: string;
+  notify_bookings: boolean;
+  notify_sales: boolean;
+  reminders: boolean;
+  meet_url: string;
+  recent: { kind: EmailKind; to_email: string; status: EmailStatus; subject: string; created_at: string; sent_at: string | null; error: string }[];
+}
+export const EMAIL_LABEL: Record<EmailKind, string> = {
+  booking_request: 'Accusé de réception',
+  booking_new: 'Alerte nouvelle réservation',
+  booking_paid: 'Paiement reçu',
+  booking_confirmed: 'Confirmation + lien visio',
+  booking_reminder: 'Rappel la veille',
+  booking_moved: 'Changement d’horaire',
+  booking_cancelled: 'Annulation',
+  guide_link: 'Lien du guide',
+  sale_new: 'Alerte nouvelle vente',
+  preview: 'Aperçu',
+};
 export type QuestionStatus = 'new' | 'in_progress' | 'answered' | 'archived';
 export interface Question {
   id: string;

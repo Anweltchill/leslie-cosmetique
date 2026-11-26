@@ -86,14 +86,15 @@ export function CgvPage() {
       </p>
       <h2>Guides numériques</h2>
       <p>
-        Les guides sont des fichiers PDF. Après confirmation du paiement par carte, un lien de téléchargement s’affiche immédiatement ; il
-        reste actif 7 jours. Le fichier téléchargé vous appartient sans limite de durée. En cas de difficulté, écrivez à <Mail /> : le guide
+        Les guides sont des fichiers PDF. Après confirmation du paiement, un lien de téléchargement vous est envoyé par e-mail (et
+        s’affiche aussitôt à l’écran en cas de paiement par carte) ; il reste actif 7 jours. Le fichier téléchargé vous appartient sans limite de durée. En cas de difficulté, écrivez à <Mail /> : le guide
         vous sera renvoyé par e-mail.
       </p>
       <h2>Coachings en visio</h2>
       <p>
         Les séances (Coaching Formulation, Consultation Lancement de Marque, Audit d’orientation) se déroulent en visioconférence, sur le
-        créneau choisi dans le calendrier du site. Le rendez-vous est confirmé par e-mail avec le lien de connexion.
+        créneau choisi dans le calendrier du site. Un récapitulatif est envoyé par e-mail dès la réservation, puis le rendez-vous est
+        confirmé par e-mail avec le lien de connexion ; un rappel est envoyé avant la séance.
       </p>
       <p>
         Toute demande de report ou d’annulation doit être adressée par e-mail au plus tard 48 h avant la séance : la séance est alors
@@ -126,8 +127,8 @@ export function ConfidentialitePage() {
       </p>
       <h2>Données collectées</h2>
       <p>
-        <strong>Réservation d’une séance</strong> : nom, e-mail, téléphone (facultatif), message et créneau choisi, pour organiser et
-        confirmer votre rendez-vous.
+        <strong>Réservation d’une séance</strong> : nom, e-mail, téléphone (facultatif), message, créneau choisi et fuseau horaire, pour
+        organiser votre rendez-vous et vous envoyer les e-mails qui s’y rapportent (récapitulatif, confirmation, rappel, changement).
       </p>
       <p>
         <strong>Question envoyée via la bulle « Une question ? »</strong> : nom, e-mail et message, pour vous répondre.
@@ -146,8 +147,8 @@ export function ConfidentialitePage() {
       </p>
       <h2>Destinataires et hébergement</h2>
       <p>
-        Les données sont réservées à {site.name}. Elles sont hébergées par Supabase (base de données), Netlify (site) et Stripe (paiements),
-        qui agissent en tant que sous-traitants. Elles ne sont jamais vendues ni cédées.
+        Les données sont réservées à {site.name}. Elles sont hébergées par Supabase (base de données), Netlify (site), Stripe (paiements)
+        et Resend (envoi des e-mails), qui agissent en tant que sous-traitants. Elles ne sont jamais vendues ni cédées.
       </p>
       <h2>Durée de conservation</h2>
       <p>
